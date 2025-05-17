@@ -4,6 +4,7 @@ import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { ArrowRightIcon } from "lucide-react"
+import Link from "next/link"
 
 export default function Page() {
   return (
@@ -21,10 +22,10 @@ export default function Page() {
               <CardContent className="flex justify-between">
                 <p>Administra tu catálogo de productos</p>
                 <Button variant="outline" size="sm" asChild>
-                  <a href="/dashboard/productos">
+                  <Link href="/productos">
                     <ArrowRightIcon className="mr-2 h-4 w-4" />
                     Ver
-                  </a>
+                  </Link>
                 </Button>
               </CardContent>
             </Card>
@@ -36,10 +37,10 @@ export default function Page() {
               <CardContent className="flex justify-between">
                 <p>Organiza tus productos por categorías</p>
                 <Button variant="outline" size="sm" asChild>
-                  <a href="/dashboard/categorias">
+                  <Link href="/categorias">
                     <ArrowRightIcon className="mr-2 h-4 w-4" />
                     Ver
-                  </a>
+                  </Link>
                 </Button>
               </CardContent>
             </Card>
@@ -51,10 +52,10 @@ export default function Page() {
               <CardContent className="flex justify-between">
                 <p>Actualiza precios de forma masiva</p>
                 <Button variant="outline" size="sm" asChild>
-                  <a href="/dashboard/precios">
+                  <Link href="/precios">
                     <ArrowRightIcon className="mr-2 h-4 w-4" />
                     Ver
-                  </a>
+                  </Link>
                 </Button>
               </CardContent>
             </Card>
@@ -66,10 +67,10 @@ export default function Page() {
               <CardContent className="flex justify-between">
                 <p>Visualiza los usuarios de la app</p>
                 <Button variant="outline" size="sm" asChild>
-                  <a href="/dashboard/clientes">
+                  <Link href="/clientes">
                     <ArrowRightIcon className="mr-2 h-4 w-4" />
                     Ver
-                  </a>
+                  </Link>
                 </Button>
               </CardContent>
             </Card>
@@ -81,10 +82,10 @@ export default function Page() {
               <CardContent className="flex justify-between">
                 <p>Gestiona el stock de tus productos</p>
                 <Button variant="outline" size="sm" asChild>
-                  <a href="/dashboard/stocks">
+                  <Link href="/stocks">
                     <ArrowRightIcon className="mr-2 h-4 w-4" />
                     Ver
-                  </a>
+                  </Link>
                 </Button>
               </CardContent>
             </Card>
