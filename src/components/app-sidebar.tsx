@@ -60,12 +60,12 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       <SidebarHeader>
         <SidebarMenu>
           <SidebarMenuItem>
-            <SidebarMenuButton asChild className="data-[slot=sidebar-menu-button]:!p-1.5">
-              <a href="/dashboard">
+ 
+              <span className="flex items-center gap-2">
                 <LayoutDashboardIcon className="h-5 w-5" />
-                <span className="text-base font-semibold">Admin Panel</span>
-              </a>
-            </SidebarMenuButton>
+                <span className="text-base font-semibold">Admin Mi Tienda</span>
+              </span>
+
           </SidebarMenuItem>
         </SidebarMenu>
       </SidebarHeader>
