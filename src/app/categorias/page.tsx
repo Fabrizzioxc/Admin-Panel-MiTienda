@@ -111,50 +111,49 @@ export default function CategoriasPage() {
         <div className="flex flex-1 flex-col p-6">
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
             <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-              <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
+            <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
                 <TabsList>
-                  <TabsTrigger value="todas">Todas</TabsTrigger>
-                  <TabsTrigger value="categorias">Categorías</TabsTrigger>
-                  <TabsTrigger value="subcategorias">Subcategorías</TabsTrigger>
+                <TabsTrigger value="todas">Todas</TabsTrigger>
+                <TabsTrigger value="categorias">Categorías</TabsTrigger>
+                <TabsTrigger value="subcategorias">Subcategorías</TabsTrigger>
                 </TabsList>
-                <div className="flex items-center gap-2">
-                  <div className="relative w-full sm:w-64">
-                    <SearchIcon className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-                    <Input
-                      placeholder="Buscar categorías..."
-                      className="pl-8"
-                      value={searchTerm}
-                      onChange={(e) => setSearchTerm(e.target.value)}
-                    />
-                  </div>
-                  {activeTab === "categorias" && (
-                    <Button onClick={() => handleNewCategory("C")} className="gap-1">
-                      <PlusIcon className="h-4 w-4" />
-                      Nueva Categoría
-                    </Button>
-                  )}
-                  {activeTab === "subcategorias" && (
-                    <Button onClick={() => handleNewCategory("S")} className="gap-1">
-                      <PlusIcon className="h-4 w-4" />
-                      Nueva Subcategoría
-                    </Button>
-                  )}
-                  {activeTab === "todas" && (
-                    <>
-                      <Button onClick={() => handleNewCategory("C")} className="gap-1">
-                        <PlusIcon className="h-4 w-4" />
-                        Nueva Categoría
-                      </Button>
-                      <Button onClick={() => handleNewCategory("S")} variant="outline" className="gap-1">
-                        <PlusIcon className="h-4 w-4" />
-                        Nueva Subcategoría
-                      </Button>
-                    </>
-                  )}
+                <div className="relative w-full sm:w-64">
+                <SearchIcon className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+                <Input
+                    placeholder="Buscar categorías..."
+                    className="pl-8"
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                />
                 </div>
-              </div>
             </div>
-
+            <div className="flex gap-2 ml-auto">
+                {activeTab === "categorias" && (
+                <Button onClick={() => handleNewCategory("C")} className="gap-1">
+                    <PlusIcon className="h-4 w-4" />
+                    Nueva Categoría
+                </Button>
+                )}
+                {activeTab === "subcategorias" && (
+                <Button onClick={() => handleNewCategory("S")} className="gap-1">
+                    <PlusIcon className="h-4 w-4" />
+                    Nueva Subcategoría
+                </Button>
+                )}
+                {activeTab === "todas" && (
+                <>
+                    <Button onClick={() => handleNewCategory("C")} className="gap-1">
+                    <PlusIcon className="h-4 w-4" />
+                    Nueva Categoría
+                    </Button>
+                    <Button onClick={() => handleNewCategory("S")} variant="outline" className="gap-1">
+                    <PlusIcon className="h-4 w-4" />
+                    Nueva Subcategoría
+                    </Button>
+                </>
+                )}
+            </div>
+            </div>
             <TabsContent value="todas" className="mt-6">
               <div className="rounded-md border">
                 <Table>
