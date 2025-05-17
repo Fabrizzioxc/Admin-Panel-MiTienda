@@ -63,20 +63,21 @@ export function StockDialog({ open, onOpenChange, ajuste, setAjuste, onApply }: 
             </Select>
           </div>
           <div className="grid grid-cols-2 items-center gap-4">
-            <Label>Cantidad</Label>
-            <Input
-              type="number"
-              min="1"
-              value={ajuste.cantidad}
-              onChange={(e) =>
-                setAjuste({
-                  ...ajuste,
-                  cantidad: Number.parseInt(e.target.value) || 0,
-                })
-              }
-              className="text-right"
-            />
-          </div>
+          <Label>Cantidad</Label>
+          <Input
+            type="text"
+            inputMode="numeric"
+            pattern="[0-9]*"
+            value={ajuste.cantidad === 0 ? "" : ajuste.cantidad}
+            onChange={(e) =>
+              setAjuste({
+                ...ajuste,
+                cantidad: Math.max(0, parseInt(e.target.value) || 0),
+              })
+            }
+            className="text-right [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
+          />
+        </div>
           <div className="grid grid-cols-2 items-center gap-4">
             <Label>Stock Nuevo</Label>
             <Input
