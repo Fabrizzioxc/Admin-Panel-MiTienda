@@ -4,7 +4,6 @@ import type * as React from "react"
 import { BarChartIcon, BoxIcon, ListIcon as CategoriesIcon, DollarSignIcon, LayoutDashboardIcon, TagIcon, UsersIcon } from 'lucide-react'
 
 import { NavMain } from "./nav-main"
-import { NavUser } from "./nav-user"
 import {
   Sidebar,
   SidebarContent,
@@ -73,9 +72,6 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       <SidebarContent>
         <NavMain items={data.navMain} />
       </SidebarContent>
-      <SidebarFooter>
-        <NavUser user={data.user} />
-      </SidebarFooter>
     </Sidebar>
   )
 }
