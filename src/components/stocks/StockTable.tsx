@@ -1,4 +1,4 @@
-// ✅ components/stocks/StockTable.tsx
+
 import {
   Table,
   TableBody,

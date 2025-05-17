@@ -1,4 +1,4 @@
-// src/components/ProductForm.tsx
+
 import React, { ChangeEvent } from "react";
 import {
   Dialog,
