@@ -1,37 +1,93 @@
-import { AppSidebar } from "@/components/app-sidebar"
-import { ChartAreaInteractive } from "@/components/chart-area-interactive"
-import { DataTable } from "@/components/data-table"
-import { SectionCards } from "@/components/section-cards"
-import { SiteHeader } from "@/components/site-header"
-import {
-  SidebarInset,
-  SidebarProvider,
-} from "@/components/ui/sidebar"
-
-import data from "./data.json"
+import { AppSidebar } from "../../components/app-sidebar"
+import { SiteHeader } from "../../components/site-header"
+import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Button } from "@/components/ui/button"
+import { ArrowRightIcon } from "lucide-react"
 
 export default function Page() {
   return (
-    <SidebarProvider
-      style={
-        {
-          "--sidebar-width": "calc(var(--spacing) * 72)",
-          "--header-height": "calc(var(--spacing) * 12)",
-        } as React.CSSProperties
-      }
-    >
+    <SidebarProvider>
       <AppSidebar variant="inset" />
       <SidebarInset>
-        <SiteHeader />
-        <div className="flex flex-1 flex-col">
-          <div className="@container/main flex flex-1 flex-col gap-2">
-            <div className="flex flex-col gap-4 py-4 md:gap-6 md:py-6">
-              <SectionCards />
-              <div className="px-4 lg:px-6">
-                <ChartAreaInteractive />
-              </div>
-              <DataTable data={data} />
-            </div>
+        <SiteHeader/>
+        <div className="flex flex-1 flex-col p-6">
+          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+            <Card>
+              <CardHeader>
+                <CardTitle>Productos</CardTitle>
+                <CardDescription>Gestión de productos</CardDescription>
+              </CardHeader>
+              <CardContent className="flex justify-between">
+                <p>Administra tu catálogo de productos</p>
+                <Button variant="outline" size="sm" asChild>
+                  <a href="/dashboard/productos">
+                    <ArrowRightIcon className="mr-2 h-4 w-4" />
+                    Ver
+                  </a>
+                </Button>
+              </CardContent>
+            </Card>
+            <Card>
+              <CardHeader>
+                <CardTitle>Categorías</CardTitle>
+                <CardDescription>Gestión de categorías</CardDescription>
+              </CardHeader>
+              <CardContent className="flex justify-between">
+                <p>Organiza tus productos por categorías</p>
+                <Button variant="outline" size="sm" asChild>
+                  <a href="/dashboard/categorias">
+                    <ArrowRightIcon className="mr-2 h-4 w-4" />
+                    Ver
+                  </a>
+                </Button>
+              </CardContent>
+            </Card>
+            <Card>
+              <CardHeader>
+                <CardTitle>Precios</CardTitle>
+                <CardDescription>Actualización de precios</CardDescription>
+              </CardHeader>
+              <CardContent className="flex justify-between">
+                <p>Actualiza precios de forma masiva</p>
+                <Button variant="outline" size="sm" asChild>
+                  <a href="/dashboard/precios">
+                    <ArrowRightIcon className="mr-2 h-4 w-4" />
+                    Ver
+                  </a>
+                </Button>
+              </CardContent>
+            </Card>
+            <Card>
+              <CardHeader>
+                <CardTitle>Clientes</CardTitle>
+                <CardDescription>Usuarios registrados</CardDescription>
+              </CardHeader>
+              <CardContent className="flex justify-between">
+                <p>Visualiza los usuarios de la app</p>
+                <Button variant="outline" size="sm" asChild>
+                  <a href="/dashboard/clientes">
+                    <ArrowRightIcon className="mr-2 h-4 w-4" />
+                    Ver
+                  </a>
+                </Button>
+              </CardContent>
+            </Card>
+            <Card>
+              <CardHeader>
+                <CardTitle>Stocks</CardTitle>
+                <CardDescription>Control de inventario</CardDescription>
+              </CardHeader>
+              <CardContent className="flex justify-between">
+                <p>Gestiona el stock de tus productos</p>
+                <Button variant="outline" size="sm" asChild>
+                  <a href="/dashboard/stocks">
+                    <ArrowRightIcon className="mr-2 h-4 w-4" />
+                    Ver
+                  </a>
+                </Button>
+              </CardContent>
+            </Card>
           </div>
         </div>
       </SidebarInset>
