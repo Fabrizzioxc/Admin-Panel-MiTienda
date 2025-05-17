@@ -10,7 +10,7 @@ import { Badge } from "@/components/ui/badge"
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Avatar } from "@/components/ui/avatar"
-import { SearchIcon, FilterIcon, SaveIcon, AlertTriangleIcon, PlusIcon, MinusIcon } from "lucide-react"
+import { SearchIcon, FilterIcon, SaveIcon, AlertTriangleIcon, PlusIcon, MinusIcon, PencilIcon } from "lucide-react"
 import { toast } from "sonner"
 import {
   Dialog,
@@ -101,14 +101,6 @@ export default function StocksPage() {
     const matchesCategoria = categoriaFilter === "0" || stock.categoria_id.toString() === categoriaFilter
     return matchesSearch && matchesCategoria
   })
-
-  // Manejar cambio en el stock físico
-  const handleStockChange = (id: number, value: number) => {
-    setEditedStocks({
-      ...editedStocks,
-      [id]: value,
-    })
-  }
 
   // Guardar cambios de stock
   const handleSaveChanges = () => {
@@ -232,7 +224,7 @@ export default function StocksPage() {
                   <TableHead className="text-right">Stock Comprometido</TableHead>
                   <TableHead className="text-right">Disponible</TableHead>
                   <TableHead className="text-center">Estado</TableHead>
-                  <TableHead className="w-24 text-center">Acciones</TableHead>
+                  <TableHead className="w-12 text-center">Acciones</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -250,15 +242,7 @@ export default function StocksPage() {
                         </Avatar>
                       </TableCell>
                       <TableCell className="font-medium">{stock.nombre}</TableCell>
-                      <TableCell className="text-right">
-                        <Input
-                          type="number"
-                          min="0"
-                          value={stockValue}
-                          onChange={(e) => handleStockChange(stock.id, Number.parseInt(e.target.value) || 0)}
-                          className="h-8 w-20 text-right"
-                        />
-                      </TableCell>
+                      <TableCell className="text-right">{stockValue}</TableCell>
                       <TableCell className="text-right">{stock.stock_comprometido}</TableCell>
                       <TableCell className="text-right">{disponible}</TableCell>
                       <TableCell className="text-center">
@@ -274,11 +258,12 @@ export default function StocksPage() {
                       <TableCell>
                         <Button
                           variant="ghost"
-                          size="sm"
+                          size="icon"
                           onClick={() => handleOpenAdjustDialog(stock)}
-                          className="h-8 w-full"
+                          className="h-8 w-8"
                         >
-                          Ajustar
+                          <PencilIcon className="h-4 w-4" />
+                          <span className="sr-only">Ajustar stock</span>
                         </Button>
                       </TableCell>
                     </TableRow>
