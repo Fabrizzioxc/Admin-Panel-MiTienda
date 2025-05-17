@@ -24,15 +24,15 @@ import { toast } from "sonner"
 
 // Datos de ejemplo
 const categoriasData = [
-  { id: 1, nombre: "Electrónicos", tipo: "C", parent_id: null },
-  { id: 2, nombre: "Smartphones", tipo: "S", parent_id: 1 },
-  { id: 3, nombre: "Laptops", tipo: "S", parent_id: 1 },
-  { id: 4, nombre: "Ropa", tipo: "C", parent_id: null },
-  { id: 5, nombre: "Camisetas", tipo: "S", parent_id: 4 },
-  { id: 6, nombre: "Pantalones", tipo: "S", parent_id: 4 },
-  { id: 7, nombre: "Hogar", tipo: "C", parent_id: null },
-  { id: 8, nombre: "Muebles", tipo: "S", parent_id: 7 },
-  { id: 9, nombre: "Decoración", tipo: "S", parent_id: 7 },
+  { id: 1, nombre: "Electrónicos", tipo: "C", parent_id: null, estado: "A" },
+  { id: 2, nombre: "Smartphones", tipo: "S", parent_id: 1, estado: "A" },
+  { id: 3, nombre: "Laptops", tipo: "S", parent_id: 1, estado: "A" },
+  { id: 4, nombre: "Ropa", tipo: "C", parent_id: null, estado: "A" },
+  { id: 5, nombre: "Camisetas", tipo: "S", parent_id: 4, estado: "A" },
+  { id: 6, nombre: "Pantalones", tipo: "S", parent_id: 4, estado: "I" },
+  { id: 7, nombre: "Hogar", tipo: "C", parent_id: null, estado: "A" },
+  { id: 8, nombre: "Muebles", tipo: "S", parent_id: 7, estado: "A" },
+  { id: 9, nombre: "Decoración", tipo: "S", parent_id: 7, estado: "I" },
 ]
 
 export default function CategoriasPage() {
@@ -45,6 +45,7 @@ export default function CategoriasPage() {
     nombre: "",
     tipo: "C",
     parent_id: null as number | null,
+    estado: "A",
   })
 
   // Filtrar categorías por término de búsqueda y tipo
@@ -72,6 +73,7 @@ export default function CategoriasPage() {
       nombre: "",
       tipo,
       parent_id: tipo === "S" ? mainCategories[0]?.id || null : null,
+      estado: "A",
     })
     setIsDialogOpen(true)
   }
@@ -105,7 +107,7 @@ export default function CategoriasPage() {
     <SidebarProvider>
       <AppSidebar variant="inset" />
       <SidebarInset>
-        <SiteHeader />
+        <SiteHeader/>
         <div className="flex flex-1 flex-col p-6">
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
             <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
@@ -115,25 +117,41 @@ export default function CategoriasPage() {
                   <TabsTrigger value="categorias">Categorías</TabsTrigger>
                   <TabsTrigger value="subcategorias">Subcategorías</TabsTrigger>
                 </TabsList>
-                <div className="relative w-full sm:w-64">
-                  <SearchIcon className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-                  <Input
-                    placeholder="Buscar categorías..."
-                    className="pl-8"
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                  />
+                <div className="flex items-center gap-2">
+                  <div className="relative w-full sm:w-64">
+                    <SearchIcon className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+                    <Input
+                      placeholder="Buscar categorías..."
+                      className="pl-8"
+                      value={searchTerm}
+                      onChange={(e) => setSearchTerm(e.target.value)}
+                    />
+                  </div>
+                  {activeTab === "categorias" && (
+                    <Button onClick={() => handleNewCategory("C")} className="gap-1">
+                      <PlusIcon className="h-4 w-4" />
+                      Nueva Categoría
+                    </Button>
+                  )}
+                  {activeTab === "subcategorias" && (
+                    <Button onClick={() => handleNewCategory("S")} className="gap-1">
+                      <PlusIcon className="h-4 w-4" />
+                      Nueva Subcategoría
+                    </Button>
+                  )}
+                  {activeTab === "todas" && (
+                    <>
+                      <Button onClick={() => handleNewCategory("C")} className="gap-1">
+                        <PlusIcon className="h-4 w-4" />
+                        Nueva Categoría
+                      </Button>
+                      <Button onClick={() => handleNewCategory("S")} variant="outline" className="gap-1">
+                        <PlusIcon className="h-4 w-4" />
+                        Nueva Subcategoría
+                      </Button>
+                    </>
+                  )}
                 </div>
-              </div>
-              <div className="flex gap-2">
-                <Button onClick={() => handleNewCategory("C")} className="gap-1">
-                  <PlusIcon className="h-4 w-4" />
-                  Nueva Categoría
-                </Button>
-                <Button onClick={() => handleNewCategory("S")} variant="outline" className="gap-1">
-                  <PlusIcon className="h-4 w-4" />
-                  Nueva Subcategoría
-                </Button>
               </div>
             </div>
 
@@ -146,12 +164,13 @@ export default function CategoriasPage() {
                       <TableHead>Nombre</TableHead>
                       <TableHead>Tipo</TableHead>
                       <TableHead>Categoría Padre</TableHead>
+                      <TableHead>Estado</TableHead>
                       <TableHead className="w-24">Acciones</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
                     {filteredCategorias.map((categoria) => (
-                      <TableRow key={categoria.id}>
+                      <TableRow key={categoria.id} className={categoria.estado === "I" ? "text-red-600" : ""}>
                         <TableCell>
                           {categoria.tipo === "C" ? (
                             <FolderIcon className="h-5 w-5 text-primary" />
@@ -166,6 +185,11 @@ export default function CategoriasPage() {
                           </Badge>
                         </TableCell>
                         <TableCell>{getParentName(categoria.parent_id)}</TableCell>
+                        <TableCell>
+                          <Badge variant={categoria.estado === "A" ? "default" : "destructive"}>
+                            {categoria.estado === "A" ? "Activo" : "Inactivo"}
+                          </Badge>
+                        </TableCell>
                         <TableCell>
                           <Button
                             variant="ghost"
@@ -191,16 +215,22 @@ export default function CategoriasPage() {
                     <TableRow>
                       <TableHead className="w-12"></TableHead>
                       <TableHead>Nombre</TableHead>
+                      <TableHead>Estado</TableHead>
                       <TableHead className="w-24">Acciones</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
                     {filteredCategorias.map((categoria) => (
-                      <TableRow key={categoria.id}>
+                      <TableRow key={categoria.id} className={categoria.estado === "I" ? "text-red-600" : ""}>
                         <TableCell>
                           <FolderIcon className="h-5 w-5 text-primary" />
                         </TableCell>
                         <TableCell className="font-medium">{categoria.nombre}</TableCell>
+                        <TableCell>
+                          <Badge variant={categoria.estado === "A" ? "default" : "destructive"}>
+                            {categoria.estado === "A" ? "Activo" : "Inactivo"}
+                          </Badge>
+                        </TableCell>
                         <TableCell>
                           <Button
                             variant="ghost"
@@ -227,17 +257,23 @@ export default function CategoriasPage() {
                       <TableHead className="w-12"></TableHead>
                       <TableHead>Nombre</TableHead>
                       <TableHead>Categoría Padre</TableHead>
+                      <TableHead>Estado</TableHead>
                       <TableHead className="w-24">Acciones</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
                     {filteredCategorias.map((categoria) => (
-                      <TableRow key={categoria.id}>
+                      <TableRow key={categoria.id} className={categoria.estado === "I" ? "text-red-600" : ""}>
                         <TableCell>
                           <TagIcon className="h-5 w-5 text-muted-foreground" />
                         </TableCell>
                         <TableCell className="font-medium">{categoria.nombre}</TableCell>
                         <TableCell>{getParentName(categoria.parent_id)}</TableCell>
+                        <TableCell>
+                          <Badge variant={categoria.estado === "A" ? "default" : "destructive"}>
+                            {categoria.estado === "A" ? "Activo" : "Inactivo"}
+                          </Badge>
+                        </TableCell>
                         <TableCell>
                           <Button
                             variant="ghost"
@@ -330,6 +366,49 @@ export default function CategoriasPage() {
                     </Select>
                   </div>
                 )}
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div className="flex flex-col gap-3">
+                  <Label htmlFor="tipo">Tipo</Label>
+                  <Select
+                    defaultValue={editingCategory.tipo}
+                    onValueChange={(value: "C" | "S") => {
+                      setEditingCategory({
+                        ...editingCategory,
+                        tipo: value,
+                        parent_id: value === "S" ? mainCategories[0]?.id || null : null,
+                      })
+                    }}
+                  >
+                    <SelectTrigger id="tipo" className="w-full">
+                      <SelectValue placeholder="Seleccionar tipo" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="C">Categoría</SelectItem>
+                      <SelectItem value="S">Subcategoría</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="flex flex-col gap-3">
+                  <Label htmlFor="estado">Estado</Label>
+                  <Select
+                    defaultValue={editingCategory.estado}
+                    onValueChange={(value: "A" | "I") => {
+                      setEditingCategory({
+                        ...editingCategory,
+                        estado: value,
+                      })
+                    }}
+                  >
+                    <SelectTrigger id="estado" className="w-full">
+                      <SelectValue placeholder="Seleccionar estado" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="A">Activo</SelectItem>
+                      <SelectItem value="I">Inactivo</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
               </div>
               <DialogFooter>
                 <Button variant="outline" onClick={() => setIsDialogOpen(false)}>
