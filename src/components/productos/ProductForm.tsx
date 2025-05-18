@@ -1,4 +1,3 @@
-// ProductForm.tsx modificado
 import React, { ChangeEvent } from "react";
 import {
   Dialog,
@@ -14,7 +13,16 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Avatar } from "@/components/ui/avatar";
-import { Categoria } from "@/types/types";
+
+export type Categoria = {
+  id: string;
+  codigo: string;
+  tipo: "C" | "S";
+  descripcion: string;
+  imagen_url: string | null;
+  estado: "A" | "I";
+  categoria_padre_id: string | null;
+};
 
 export type Producto = {
   id: string;
@@ -57,6 +65,9 @@ export function ProductForm({
   onCancel,
   calcularPrecioVenta,
 }: ProductFormProps) {
+  console.log("📌 categoría_id actual:", producto.categoria_id);
+  console.log("📂 categorías cargadas:", categorias.map(c => c.id));
+
   return (
     <Dialog open={isOpen} onOpenChange={(open) => { if (!open) onCancel(); }}>
       <DialogContent className="sm:max-w-[600px]">
@@ -100,8 +111,9 @@ export function ProductForm({
             <div className="flex flex-col gap-2">
               <Label>Categoría</Label>
               <Select
-                value={producto.categoria_id}
+                value={producto.categoria_id || ""}
                 onValueChange={(value) => {
+                  console.log("✅ Categoría seleccionada:", value);
                   onChange("categoria_id", value);
                   onChange("subcategoria_id", "");
                 }}
@@ -122,7 +134,7 @@ export function ProductForm({
             <div className="flex flex-col gap-2">
               <Label>Subcategoría</Label>
               <Select
-                value={producto.subcategoria_id || undefined}
+                value={producto.subcategoria_id || ""}
                 onValueChange={(value) => onChange("subcategoria_id", value)}
                 disabled={!producto.categoria_id}
               >

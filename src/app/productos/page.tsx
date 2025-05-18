@@ -1,4 +1,3 @@
-// src/app/productos/page.tsx (actualizado)
 "use client";
 
 import React, { useState } from "react";
@@ -26,7 +25,7 @@ export default function ProductosPage() {
     fetchProductos
   } = useProductos();
 
-  const { categoriasPadre, subcategorias, loading } = useCategorias(); // ✅ Solo esto, limpio
+  const { categoriasPadre, subcategorias, loading } = useCategorias();
 
   const [selectedProducts, setSelectedProducts] = useState<string[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
@@ -55,7 +54,6 @@ export default function ProductosPage() {
     (cat) => cat.categoria_padre_id === editingProduct.categoria_id
   );
 
-
   const handleSelectProduct = (id: string) => {
     setSelectedProducts((prev: string[]) =>
       prev.includes(id) ? prev.filter((pid: string) => pid !== id) : [...prev, id]
@@ -63,11 +61,6 @@ export default function ProductosPage() {
   };
 
   const handleEditClick = () => {
-    if (selectedProducts.length !== 1) {
-      toast.error("Debe seleccionar exactamente un producto para editar");
-      return;
-    }
-
     const product = productos.find((p) => p.id === selectedProducts[0]);
     if (!product) return toast.error("Producto no encontrado");
 
@@ -99,7 +92,10 @@ export default function ProductosPage() {
   };
 
   const handleFormChange = (field: keyof Producto, value: any) => {
-    setEditingProduct({ ...editingProduct, [field]: value });
+    setEditingProduct((prev) => ({
+      ...prev,
+      [field]: value,
+    }));
   };
 
   const handleDeleteClick = async () => {
@@ -197,6 +193,7 @@ export default function ProductosPage() {
             onCancel={() => setIsFormOpen(false)}
             calcularPrecioVenta={calcularPrecioVenta}
           />
+
         </div>
       </SidebarInset>
     </SidebarProvider>
