@@ -43,54 +43,69 @@ export function useProductos() {
     }
   };
 
-  const crearProducto = async (producto: Producto, file: File) => {
-    try {
-      const fileName = `${Date.now()}_${file.name}`;
-      const { error: uploadError } = await supabase.storage
-        .from("productos")
-        .upload(fileName, file);
+const crearProducto = async (producto: Producto, file: File) => {
+  try {
+    // 1. Subir la imagen
+    const ext = file.name.split(".").pop();
+    const fileName = `${Date.now()}.${ext}`;
+    const { error: uploadError } = await supabase.storage
+      .from("productos")
+      .upload(fileName, file);
 
-      if (uploadError) {
-        toast.error("Error subiendo imagen: " + uploadError.message);
-        return;
+    if (uploadError) throw uploadError;
+
+    const foto_url = `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/productos/${fileName}`;
+
+    // 2. Preparar producto sin campos vacíos inválidos
+    const productoLimpio: Partial<Producto> = {
+      ...producto,
+      foto_url,
+    };
+
+    // Limpiar campos opcionales
+    const camposOpcionales: (keyof Producto)[] = ['categoria_id', 'subcategoria_id', 'codigo'];
+    camposOpcionales.forEach(key => {
+      const valor = productoLimpio[key];
+      if (valor === null || valor === undefined || valor === '') {
+        delete productoLimpio[key];
       }
+    });
 
-      const imageUrl = `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/productos/${fileName}`;
+    // Si no hay id, es un nuevo producto
+    if (!productoLimpio.id) delete productoLimpio.id;
 
-      // Construye un nuevo objeto manualmente
-const payload: Partial<Producto> = {
-  nombre: producto.nombre,
-  descripcion: producto.descripcion,
-  unidad_venta: producto.unidad_venta,
-  categoria_id: producto.categoria_id === "" ? null : producto.categoria_id,
-  subcategoria_id: producto.subcategoria_id === "" ? null : producto.subcategoria_id,
-  contenido: producto.contenido,
-  info_adicional: producto.info_adicional,
-  estado: producto.estado,
-  foto_url: imageUrl,
-  moneda: producto.moneda,
-  valor_venta: producto.valor_venta,
-  tasa_impuesto: producto.tasa_impuesto,
-  precio_venta: producto.precio_venta,
-  // id y codigo se omiten completamente
+    // 3. Insertar producto
+    const { data, error: insertError } = await supabase
+      .from("productos")
+      .insert([productoLimpio])
+      .select();
+
+    if (insertError || !data || data.length === 0) throw insertError;
+
+    const nuevoProducto = data[0];
+
+    // 4. Crear su stock con valor inicial 0
+    const { error: stockError } = await supabase
+      .from("stocks")
+      .insert({
+        producto_id: nuevoProducto.id,
+        stock_fisico: 0,
+        stock_comprometido: 0,
+      });
+
+    if (stockError) {
+      console.error("❌ Error creando el stock:", stockError);
+      toast.warning("Producto creado, pero no se pudo registrar en stock.");
+    } else {
+      toast.success("Producto y stock creados exitosamente.");
+    }
+  } catch (error) {
+    console.error("❌ Supabase insert error", error);
+    toast.error("Error al crear el producto.");
+  }
 };
 
-
-      const { error } = await supabase.from("productos").insert([payload]);
-
-      if (error) {
-        toast.error("Error al insertar producto: " + error.message);
-        console.error("❌ Supabase insert error", error);
-        return;
-      }
-
-      toast.success("Producto creado");
-      fetchProductos();
-    } catch (err) {
-      console.error("🧨 Error inesperado al crear producto:", err);
-      toast.error("Error inesperado al crear producto");
-    }
-  };
+  
 
   const desactivarProducto = async (id: string) => {
     const { error } = await supabase.from("productos").update({ estado: "I" }).eq("id", id);
