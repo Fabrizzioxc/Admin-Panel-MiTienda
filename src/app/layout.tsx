@@ -39,6 +39,7 @@ export default function RootLayout({
             forcedTheme: "light",
             resolvedTheme: "light",
           }}
+          storageKey="theme"
         >
           {children}
         </ThemeProvider>

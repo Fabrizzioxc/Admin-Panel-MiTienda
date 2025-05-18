@@ -47,9 +47,13 @@ export function StockTable({ items, edited, setEdited, onEdit, isLow }: StockTab
         return (
           <TableRow key={item.id}>
             <TableCell className="text-center">
-              <Avatar className="h-10 w-10 rounded-md mx-auto">
-                <img src={item.foto_url || "/placeholder.svg"} alt={item.nombre} />
-              </Avatar>
+              <div className="relative w-20 h-20 mx-auto">
+                <img
+                  src={item.foto_url || "/placeholder.svg"}
+                  alt={item.nombre}
+                  className="w-full h-full object-cover rounded-lg"
+                />
+              </div>
             </TableCell>
             <TableCell className="text-left font-medium">{item.nombre}</TableCell>
             <TableCell className="text-center">{value}</TableCell>

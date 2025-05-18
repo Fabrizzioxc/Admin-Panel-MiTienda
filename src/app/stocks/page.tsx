@@ -54,7 +54,7 @@ export default function StockPage() {
       <SidebarInset>
         <SiteHeader />
         <div className="p-6">
-          <h2 className="text-xl font-semibold mb-4">Gestión de Stock</h2>
+          <h2 className="text-2xl font-semibold mb-4">Gestión de Stock</h2>
           <div className="rounded-md border">
             {loading ? (
               <div className="p-4 text-center">
@@ -69,14 +69,14 @@ export default function StockPage() {
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead></TableHead>
-                    <TableHead>Producto</TableHead>
-                    <TableHead>Categoría</TableHead>
-                    <TableHead className="text-right">Stock Físico</TableHead>
-                    <TableHead className="text-right">Stock Comprometido</TableHead>
-                    <TableHead className="text-right">Disponible</TableHead>
-                    <TableHead className="text-center">Estado</TableHead>
-                    <TableHead></TableHead>
+                    <TableHead className="text-base">Imagen</TableHead>
+                    <TableHead className="text-base">Producto</TableHead>
+                    <TableHead className="text-base">Categoría</TableHead>
+                    <TableHead className="text-base text-right">Stock Físico</TableHead>
+                    <TableHead className="text-base text-right">Stock Comprometido</TableHead>
+                    <TableHead className="text-base text-right">Disponible</TableHead>
+                    <TableHead className="text-base text-center">Estado</TableHead>
+                    <TableHead className="text-base">Acciones</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -86,15 +86,19 @@ export default function StockPage() {
                     return (
                       <TableRow key={stock.id}>
                         <TableCell>
-                          <Avatar className="h-10 w-10 rounded-md">
-                            <img src={stock.foto_url || "/placeholder.svg"} alt={stock.nombre} />
-                          </Avatar>
+                          <div className="relative w-20 h-20">
+                            <img
+                              src={stock.foto_url || "/placeholder.svg"}
+                              alt={stock.nombre}
+                              className="w-full h-full object-cover rounded-lg"
+                            />
+                          </div>
                         </TableCell>
-                        <TableCell>{stock.nombre}</TableCell>
-                        <TableCell>{stock.categoria}</TableCell>
-                        <TableCell className="text-right">{stock.stock_fisico}</TableCell>
-                        <TableCell className="text-right">{stock.stock_comprometido}</TableCell>
-                        <TableCell className="text-right">{disponible}</TableCell>
+                        <TableCell className="text-base">{stock.nombre}</TableCell>
+                        <TableCell className="text-base">{stock.categoria}</TableCell>
+                        <TableCell className="text-base text-right">{stock.stock_fisico}</TableCell>
+                        <TableCell className="text-base text-right">{stock.stock_comprometido}</TableCell>
+                        <TableCell className="text-base text-right">{disponible}</TableCell>
                         <TableCell className="text-center">
                           {bajo ? (
                             <Badge variant="destructive" className="gap-1">
