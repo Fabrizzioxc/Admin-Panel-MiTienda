@@ -56,10 +56,13 @@ export function ProductTable({ productos, searchTerm, selectedProducts, onSelect
                 />
               </TableCell>
               <TableCell>
-                <Avatar>
-                  <AvatarImage src={producto.foto_url || ""} alt={producto.nombre} />
-                  <AvatarFallback>{producto.nombre?.[0] || ""}</AvatarFallback>
-                </Avatar>
+                <div className="relative w-20 h-20">
+                  <img
+                    src={producto.foto_url || ""}
+                    alt={producto.nombre}
+                    className="w-full h-full object-cover rounded-lg"
+                  />
+                </div>
               </TableCell>
               <TableCell className="whitespace-nowrap">{producto.nombre}</TableCell>
               <TableCell className="whitespace-normal">{producto.descripcion}</TableCell>
