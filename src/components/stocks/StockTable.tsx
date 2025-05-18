@@ -1,3 +1,4 @@
+// components/stocks/StockTable.tsx
 
 import {
   Table,
@@ -16,8 +17,8 @@ import { StockItem } from "@/hooks/useStocks";
 
 interface StockTableProps {
   items: StockItem[];
-  edited: { [key: number]: number };
-  setEdited: (map: { [key: number]: number }) => void;
+  edited: { [key: string]: number };
+  setEdited: (map: { [key: string]: number }) => void;
   onEdit: (item: StockItem) => void;
   isLow: (fisico: number, comprometido: number) => boolean;
 }
