@@ -72,13 +72,13 @@ export function PrecioTable({
               </TableHead>
               <TableHead className="w-12"></TableHead>
               <TableHead>Nombre</TableHead>
-              <TableHead className="text-right">Precio Actual</TableHead>
+              <TableHead className="text-center">Precio Actual</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {productos.map((producto) => (
               <TableRow key={producto.id}>
-                <TableCell>
+                <TableCell className="text-center">
                   <Checkbox
                     checked={selected.includes(producto.id)}
                     onCheckedChange={(checked) =>
@@ -86,7 +86,7 @@ export function PrecioTable({
                     }
                   />
                 </TableCell>
-                <TableCell>
+                <TableCell className="text-center">
                   <Avatar className="h-10 w-10 rounded-md">
                     <img
                       src={producto.foto_url || "/placeholder.svg"}
@@ -94,10 +94,10 @@ export function PrecioTable({
                     />
                   </Avatar>
                 </TableCell>
-                <TableCell className="font-medium">
+                <TableCell className="text-center font-medium">
                   {producto.nombre}
                 </TableCell>
-                <TableCell className="text-right">
+                <TableCell className="text-center">
                   S/ {producto.precio.toFixed(2)}
                 </TableCell>
               </TableRow>
