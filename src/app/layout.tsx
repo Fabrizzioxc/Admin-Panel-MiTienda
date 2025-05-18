@@ -1,8 +1,7 @@
-// ✅ layout.tsx optimizado con estructura persistente
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import { ThemeProvider } from "next-themes";
+import { ThemeProvider } from "@/components/theme-provider"; // 👈 usa tu propio ThemeProvider
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -25,21 +24,15 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="es">
+    <html lang="es" suppressHydrationWarning>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased bg-background text-foreground`}
       >
         <ThemeProvider
           attribute="class"
-          defaultTheme="light"
+          defaultTheme="system"
           enableSystem
           disableTransitionOnChange
-          value={{
-            defaultTheme: "light",
-            forcedTheme: "light",
-            resolvedTheme: "light",
-          }}
-          storageKey="theme"
         >
           {children}
         </ThemeProvider>
