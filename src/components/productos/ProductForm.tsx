@@ -1,4 +1,4 @@
-
+// ProductForm.tsx modificado
 import React, { ChangeEvent } from "react";
 import {
   Dialog,
@@ -14,6 +14,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Avatar } from "@/components/ui/avatar";
+import { Categoria } from "@/types/types";
 
 export type Producto = {
   id: string;
@@ -31,14 +32,6 @@ export type Producto = {
   tasa_impuesto: number;
   precio_venta: number;
   created_at: string;
-};
-
-export type Categoria = {
-  id: string;
-  nombre: string;
-  tipo: string;
-  estado: string;
-  categoria_padre_id: string;
 };
 
 interface ProductFormProps {
@@ -119,7 +112,7 @@ export function ProductForm({
                 <SelectContent>
                   {categorias.map((cat) => (
                     <SelectItem key={cat.id} value={cat.id}>
-                      {cat.nombre}
+                      {cat.descripcion}
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -137,11 +130,13 @@ export function ProductForm({
                   <SelectValue placeholder="Seleccionar subcategoría" />
                 </SelectTrigger>
                 <SelectContent>
-                  {subcategorias.map((subcat) => (
-                    <SelectItem key={subcat.id} value={subcat.id}>
-                      {subcat.nombre}
-                    </SelectItem>
-                  ))}
+                  {subcategorias
+                    .filter((subcat) => subcat.categoria_padre_id === producto.categoria_id)
+                    .map((subcat) => (
+                      <SelectItem key={subcat.id} value={subcat.id}>
+                        {subcat.descripcion}
+                      </SelectItem>
+                    ))}
                 </SelectContent>
               </Select>
             </div>
@@ -162,10 +157,7 @@ export function ProductForm({
           <div className="grid grid-cols-3 gap-4">
             <div className="flex flex-col gap-2">
               <Label>Moneda</Label>
-              <Input
-                value={producto.moneda}
-                onChange={(e) => onChange("moneda", e.target.value)}
-              />
+              <Input value={producto.moneda} disabled />
             </div>
             <div className="flex flex-col gap-2">
               <Label>Valor de venta</Label>

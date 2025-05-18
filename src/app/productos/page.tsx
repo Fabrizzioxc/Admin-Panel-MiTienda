@@ -1,4 +1,4 @@
-// src/app/productos/page.tsx
+// src/app/productos/page.tsx (actualizado)
 "use client";
 
 import React, { useState } from "react";
@@ -10,31 +10,29 @@ import { Button } from "@/components/ui/button";
 import { PlusIcon, PencilIcon, TrashIcon, SearchIcon } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { ProductTable } from "@/components/productos/ProductTable";
-import { ProductForm, Producto, Categoria } from "@/components/productos/ProductForm";
+import { ProductForm, Producto } from "@/components/productos/ProductForm";
 import { useProductos } from "@/hooks/useProductos";
+import { useCategorias } from "@/hooks/useCategorias";
 import { toast } from "sonner";
-
-interface ProductTableProps {
-  productos: Producto[];
-  searchTerm: string;
-  selectedProducts: string[];
-  onSelect: (id: string) => void;
-}
-
-const categoriasData: Categoria[] = [
-  { id: "1", nombre: "Smartphones", tipo: "S", estado: "A", categoria_padre_id: "" },
-  { id: "2", nombre: "Laptops", tipo: "S", estado: "A", categoria_padre_id: "" },
-  { id: "3", nombre: "Audio", tipo: "S", estado: "A", categoria_padre_id: "" },
-  { id: "4", nombre: "Tablets", tipo: "S", estado: "A", categoria_padre_id: "" },
-  { id: "5", nombre: "Wearables", tipo: "S", estado: "A", categoria_padre_id: "" },
-];
+import { Categoria } from "@/types/types";
 
 export default function ProductosPage() {
-  const { productos, calcularPrecioVenta, actualizarProducto, crearProducto, desactivarProducto, fetchProductos } = useProductos();
+  const {
+    productos,
+    calcularPrecioVenta,
+    actualizarProducto,
+    crearProducto,
+    desactivarProducto,
+    fetchProductos
+  } = useProductos();
+
+  const { categoriasPadre, subcategorias, loading } = useCategorias(); // ✅ Solo esto, limpio
+
   const [selectedProducts, setSelectedProducts] = useState<string[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
+
   const [editingProduct, setEditingProduct] = useState<Producto>({
     id: "",
     nombre: "",
@@ -53,9 +51,10 @@ export default function ProductosPage() {
     created_at: new Date().toISOString(),
   });
 
-  const filteredSubcategorias = categoriasData.filter(
-    (cat) => cat.tipo === "S" && cat.estado === "A" && cat.categoria_padre_id === editingProduct.categoria_id
+  const filteredSubcategorias = subcategorias.filter(
+    (cat) => cat.categoria_padre_id === editingProduct.categoria_id
   );
+
 
   const handleSelectProduct = (id: string) => {
     setSelectedProducts((prev: string[]) =>
@@ -189,7 +188,7 @@ export default function ProductosPage() {
           <ProductForm
             isOpen={isFormOpen}
             producto={editingProduct}
-            categorias={categoriasData}
+            categorias={categoriasPadre}
             subcategorias={filteredSubcategorias}
             onChange={handleFormChange}
             onFileChange={handleFileChange}
