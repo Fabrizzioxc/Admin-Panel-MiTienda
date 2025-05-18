@@ -78,21 +78,23 @@ export function PrecioTable({
           <TableBody>
             {productos.map((producto) => (
               <TableRow key={producto.id}>
-                <TableCell className="text-center">
+                <TableCell className="pl-2">
                   <Checkbox
                     checked={selected.includes(producto.id)}
                     onCheckedChange={(checked) =>
                       onToggleSelect(producto.id, !!checked)
                     }
+                    className="h-6 w-6 ml-auto"
                   />
                 </TableCell>
-                <TableCell className="text-center">
-                  <Avatar className="h-10 w-10 rounded-md">
+                <TableCell>
+                  <div className="relative w-20 h-20">
                     <img
                       src={producto.foto_url || "/placeholder.svg"}
                       alt={producto.nombre}
+                      className="w-full h-full object-cover rounded-lg"
                     />
-                  </Avatar>
+                  </div>
                 </TableCell>
                 <TableCell className="text-center font-medium">
                   {producto.nombre}
