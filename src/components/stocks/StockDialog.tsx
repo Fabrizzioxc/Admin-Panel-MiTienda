@@ -1,103 +1,97 @@
+// hooks/useStocks.ts
+import { useEffect, useState } from "react";
+import { supabase } from "@/lib/supabaseClient";
+import { toast } from "sonner";
 
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Button } from "@/components/ui/button";
-import { MinusIcon, PlusIcon } from "lucide-react";
-import { AjusteStock } from "@/hooks/useStocks";
+export type StockItem = {
+  id: string;
+  producto_id: string;
+  nombre: string;
+  categoria: string;
+  foto_url: string | null;
+  stock_fisico: number;
+  stock_comprometido: number;
+};
 
-interface StockDialogProps {
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
-  ajuste: AjusteStock | null;
-  setAjuste: (a: AjusteStock) => void;
-  onApply: () => void;
-}
+export type AjusteStock = {
+  id: string;
+  nombre: string;
+  stock_fisico: number;
+  cantidad: number;
+  tipo: "add" | "subtract";
+};
 
-export function StockDialog({ open, onOpenChange, ajuste, setAjuste, onApply }: StockDialogProps) {
-  if (!ajuste) return null;
+export const useStocks = () => {
+  const [stocks, setStocks] = useState<StockItem[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[400px]">
-        <DialogHeader>
-          <DialogTitle>Ajustar Stock</DialogTitle>
-          <DialogDescription>
-            Ajuste el stock físico del producto <strong>{ajuste.nombre}</strong>
-          </DialogDescription>
-        </DialogHeader>
-        <div className="grid gap-4 py-4">
-          <div className="grid grid-cols-2 items-center gap-4">
-            <Label>Stock Actual</Label>
-            <Input value={ajuste.stock_fisico} disabled className="text-right" />
-          </div>
-          <div className="grid grid-cols-2 items-center gap-4">
-            <Label>Tipo de Ajuste</Label>
-            <Select
-              value={ajuste.tipo}
-              onValueChange={(value: "add" | "subtract") => setAjuste({ ...ajuste, tipo: value })}
-            >
-              <SelectTrigger>
-                <SelectValue placeholder="Seleccionar tipo" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="add">
-                  <div className="flex items-center gap-2">
-                    <PlusIcon className="h-4 w-4 text-green-500" /> Incrementar
-                  </div>
-                </SelectItem>
-                <SelectItem value="subtract">
-                  <div className="flex items-center gap-2">
-                    <MinusIcon className="h-4 w-4 text-red-500" /> Reducir
-                  </div>
-                </SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-          <div className="grid grid-cols-2 items-center gap-4">
-          <Label>Cantidad</Label>
-          <Input
-            type="text"
-            inputMode="numeric"
-            pattern="[0-9]*"
-            value={ajuste.cantidad === 0 ? "" : ajuste.cantidad}
-            onChange={(e) =>
-              setAjuste({
-                ...ajuste,
-                cantidad: Math.max(0, parseInt(e.target.value) || 0),
-              })
-            }
-            className="text-right [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
-          />
-        </div>
-          <div className="grid grid-cols-2 items-center gap-4">
-            <Label>Stock Nuevo</Label>
-            <Input
-              value={
-                ajuste.tipo === "add"
-                  ? ajuste.stock_fisico + ajuste.cantidad
-                  : ajuste.stock_fisico - ajuste.cantidad
-              }
-              disabled
-              className="text-right font-medium"
-            />
-          </div>
-        </div>
-        <DialogFooter>
-          <Button variant="outline" onClick={() => onOpenChange(false)}>
-            Cancelar
-          </Button>
-          <Button onClick={onApply}>Aplicar Ajuste</Button>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
-  );
-}
+  const fetchStocks = async () => {
+    setLoading(true);
+    const { data, error } = await supabase
+      .from("stocks")
+      .select(`
+        id,
+        producto_id,
+        stock_fisico,
+        stock_comprometido,
+        productos (
+          nombre,
+          foto_url,
+          categoria_id,
+          categorias (
+            descripcion
+          )
+        )
+      `)
+      .order("id");
+
+    if (error) {
+      toast.error("Error al obtener stocks");
+      setLoading(false);
+      return;
+    }
+
+    const formatted: StockItem[] = data.map((item: any) => ({
+      id: item.id,
+      producto_id: item.producto_id,
+      nombre: item.productos?.nombre || "-",
+      categoria: item.productos?.categorias?.descripcion || "Sin categoría",
+      foto_url: item.productos?.foto_url || null,
+      stock_fisico: item.stock_fisico,
+      stock_comprometido: item.stock_comprometido,
+    }));
+
+    setStocks(formatted);
+    setLoading(false);
+  };
+
+  const updateStock = async (id: string, nuevoStock: number) => {
+    if (nuevoStock < 0) {
+      toast.error("El stock no puede ser negativo");
+      return;
+    }
+
+    const { error } = await supabase
+      .from("stocks")
+      .update({ stock_fisico: nuevoStock })
+      .eq("id", id);
+
+    if (error) {
+      toast.error("Error al actualizar el stock");
+    } else {
+      toast.success("Stock actualizado");
+      fetchStocks();
+    }
+  };
+
+  useEffect(() => {
+    fetchStocks();
+  }, []);
+
+  return {
+    stocks,
+    loading,
+    fetchStocks,
+    updateStock,
+  };
+};
