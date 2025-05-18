@@ -1,33 +1,14 @@
-// src/hooks/useProductos.ts
+// ✅ useProductos.ts final y robusto contra error 22P02
 import { useState, useEffect } from "react";
 import { supabase } from "@/lib/supabaseClient";
 import { toast } from "sonner";
-
-export type Producto = {
-  id: string;                   
-  nombre: string;
-  descripcion: string;
-  unidad_venta: string;
-  categoria_id: string;
-  subcategoria_id: string | null;
-  contenido: string | null;
-  info_adicional: string | null;
-  estado: "A" | "I";
-  foto_url: string;
-  moneda: string;
-  valor_venta: number;
-  tasa_impuesto: number;
-  precio_venta: number;
-  created_at: string;
-};
+import { Producto } from "@/types/types";
 
 export function useProductos() {
   const [productos, setProductos] = useState<Producto[]>([]);
 
   const fetchProductos = async () => {
-    const { data, error } = await supabase
-      .from("productos")
-      .select("*");
+    const { data, error } = await supabase.from("productos").select("*");
     if (error) toast.error("Error cargando productos");
     else setProductos(data as Producto[]);
   };
@@ -63,32 +44,56 @@ export function useProductos() {
   };
 
   const crearProducto = async (producto: Producto, file: File) => {
-    if (!file) {
-      toast.error("Debes subir una imagen");
-      return;
-    }
-    const fileName = `${Date.now()}_${file.name}`;
-    const { error: uploadError } = await supabase.storage.from("productos").upload(fileName, file);
-    if (uploadError) {
-      toast.error("Error subiendo imagen");
-      return;
-    }
-    const imageUrl = `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/productos/${fileName}`;
-    const { error } = await supabase
-      .from("productos")
-      .insert([{ ...producto, foto_url: imageUrl }]);
-    if (error) toast.error("Error al insertar producto");
-    else {
+    try {
+      const fileName = `${Date.now()}_${file.name}`;
+      const { error: uploadError } = await supabase.storage
+        .from("productos")
+        .upload(fileName, file);
+
+      if (uploadError) {
+        toast.error("Error subiendo imagen: " + uploadError.message);
+        return;
+      }
+
+      const imageUrl = `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/productos/${fileName}`;
+
+      // Construye un nuevo objeto manualmente
+const payload: Partial<Producto> = {
+  nombre: producto.nombre,
+  descripcion: producto.descripcion,
+  unidad_venta: producto.unidad_venta,
+  categoria_id: producto.categoria_id === "" ? null : producto.categoria_id,
+  subcategoria_id: producto.subcategoria_id === "" ? null : producto.subcategoria_id,
+  contenido: producto.contenido,
+  info_adicional: producto.info_adicional,
+  estado: producto.estado,
+  foto_url: imageUrl,
+  moneda: producto.moneda,
+  valor_venta: producto.valor_venta,
+  tasa_impuesto: producto.tasa_impuesto,
+  precio_venta: producto.precio_venta,
+  // id y codigo se omiten completamente
+};
+
+
+      const { error } = await supabase.from("productos").insert([payload]);
+
+      if (error) {
+        toast.error("Error al insertar producto: " + error.message);
+        console.error("❌ Supabase insert error", error);
+        return;
+      }
+
       toast.success("Producto creado");
       fetchProductos();
+    } catch (err) {
+      console.error("🧨 Error inesperado al crear producto:", err);
+      toast.error("Error inesperado al crear producto");
     }
   };
 
   const desactivarProducto = async (id: string) => {
-    const { error } = await supabase
-      .from("productos")
-      .update({ estado: "I" })
-      .eq("id", id);
+    const { error } = await supabase.from("productos").update({ estado: "I" }).eq("id", id);
     if (error) toast.error("Error al dar de baja");
     else {
       toast.success("Producto inactivado");

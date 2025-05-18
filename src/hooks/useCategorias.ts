@@ -1,4 +1,4 @@
-// hooks/useCategorias.ts
+// ✅ useCategorias.ts actualizado (asegura guardar categoria_padre_id)
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabaseClient";
 import { toast } from "sonner";
@@ -28,7 +28,7 @@ export function useCategorias() {
     try {
       const { data, error } = await supabase
         .from("categorias")
-        .upsert([categoria])
+        .upsert([{ ...categoria }]) // incluye categoria_padre_id si es subcategoría
         .select()
         .single();
 
@@ -36,7 +36,7 @@ export function useCategorias() {
       if (!data) throw new Error("No se recibieron datos de la categoría");
 
       toast.success("Categoría guardada correctamente");
-      await fetchCategorias(); // Recargar lista
+      await fetchCategorias();
       return data;
     } catch (error: any) {
       console.error("Error en Supabase:", error);

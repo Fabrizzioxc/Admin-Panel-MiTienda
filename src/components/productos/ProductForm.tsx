@@ -1,4 +1,7 @@
-import React, { ChangeEvent } from "react";
+'use client';
+
+import { ChangeEvent } from "react";
+import { Producto, Categoria } from "@/types/types"; // ✅ Importamos Producto desde types
 import {
   Dialog,
   DialogContent,
@@ -11,36 +14,13 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Avatar } from "@/components/ui/avatar";
-
-export type Categoria = {
-  id: string;
-  codigo: string;
-  tipo: "C" | "S";
-  descripcion: string;
-  imagen_url: string | null;
-  estado: "A" | "I";
-  categoria_padre_id: string | null;
-};
-
-export type Producto = {
-  id: string;
-  nombre: string;
-  descripcion: string;
-  unidad_venta: string;
-  categoria_id: string;
-  subcategoria_id: string | null;
-  contenido: string | null;
-  info_adicional: string | null;
-  estado: "A" | "I";
-  foto_url: string;
-  moneda: string;
-  valor_venta: number;
-  tasa_impuesto: number;
-  precio_venta: number;
-  created_at: string;
-};
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 interface ProductFormProps {
   isOpen: boolean;
@@ -65,9 +45,6 @@ export function ProductForm({
   onCancel,
   calcularPrecioVenta,
 }: ProductFormProps) {
-  console.log("📌 categoría_id actual:", producto.categoria_id);
-  console.log("📂 categorías cargadas:", categorias.map(c => c.id));
-
   return (
     <Dialog open={isOpen} onOpenChange={(open) => { if (!open) onCancel(); }}>
       <DialogContent className="sm:max-w-[600px]">
@@ -76,6 +53,7 @@ export function ProductForm({
           <DialogDescription>Complete los detalles del producto.</DialogDescription>
         </DialogHeader>
         <div className="grid max-h-[60vh] gap-4 overflow-y-auto py-4">
+          {/* Nombre y unidad de venta */}
           <div className="grid grid-cols-2 gap-4">
             <div className="flex flex-col gap-2">
               <Label htmlFor="nombre">Nombre</Label>
@@ -97,6 +75,7 @@ export function ProductForm({
             </div>
           </div>
 
+          {/* Descripción */}
           <div className="flex flex-col gap-2">
             <Label htmlFor="descripcion">Descripción</Label>
             <Textarea
@@ -107,15 +86,15 @@ export function ProductForm({
             />
           </div>
 
+          {/* Categoría y Subcategoría */}
           <div className="grid grid-cols-2 gap-4">
             <div className="flex flex-col gap-2">
               <Label>Categoría</Label>
               <Select
                 value={producto.categoria_id || ""}
                 onValueChange={(value) => {
-                  console.log("✅ Categoría seleccionada:", value);
                   onChange("categoria_id", value);
-                  onChange("subcategoria_id", "");
+                  onChange("subcategoria_id", ""); // resetea subcategoría
                 }}
               >
                 <SelectTrigger>
@@ -154,6 +133,7 @@ export function ProductForm({
             </div>
           </div>
 
+          {/* Contenido e info adicional */}
           <Label>Contenido</Label>
           <Input
             value={producto.contenido || ""}
@@ -166,6 +146,7 @@ export function ProductForm({
             onChange={(e) => onChange("info_adicional", e.target.value)}
           />
 
+          {/* Valores numéricos */}
           <div className="grid grid-cols-3 gap-4">
             <div className="flex flex-col gap-2">
               <Label>Moneda</Label>
@@ -204,6 +185,7 @@ export function ProductForm({
           <Label>Precio venta</Label>
           <Input value={producto.precio_venta.toFixed(2)} disabled />
 
+          {/* Estado */}
           <Label>Estado</Label>
           <Select
             value={producto.estado}
@@ -218,6 +200,7 @@ export function ProductForm({
             </SelectContent>
           </Select>
 
+          {/* Imagen */}
           <Label>Imagen</Label>
           <div className="space-y-2">
             <div className="flex items-center gap-4">
@@ -243,6 +226,7 @@ export function ProductForm({
             </div>
           </div>
         </div>
+
         <DialogFooter>
           <Button variant="outline" onClick={onCancel}>Cancelar</Button>
           <Button onClick={onSubmit}>{producto.id ? "Guardar cambios" : "Crear"}</Button>

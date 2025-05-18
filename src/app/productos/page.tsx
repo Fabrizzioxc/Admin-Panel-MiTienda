@@ -1,3 +1,4 @@
+// ✅ Productos page.tsx actualizado con categorías y subcategorías sincronizadas
 "use client";
 
 import React, { useState } from "react";
@@ -9,11 +10,11 @@ import { Button } from "@/components/ui/button";
 import { PlusIcon, PencilIcon, TrashIcon, SearchIcon } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { ProductTable } from "@/components/productos/ProductTable";
-import { ProductForm, Producto } from "@/components/productos/ProductForm";
+import { ProductForm } from "@/components/productos/ProductForm";
 import { useProductos } from "@/hooks/useProductos";
 import { useCategorias } from "@/hooks/useCategorias";
+import { Producto } from "@/types/types"; 
 import { toast } from "sonner";
-import { Categoria } from "@/types/types";
 
 export default function ProductosPage() {
   const {
@@ -92,10 +93,10 @@ export default function ProductosPage() {
   };
 
   const handleFormChange = (field: keyof Producto, value: any) => {
-    setEditingProduct((prev) => ({
+    setEditingProduct((prev: Producto) => ({
       ...prev,
       [field]: value,
-    }));
+    }));    
   };
 
   const handleDeleteClick = async () => {
@@ -193,7 +194,6 @@ export default function ProductosPage() {
             onCancel={() => setIsFormOpen(false)}
             calcularPrecioVenta={calcularPrecioVenta}
           />
-
         </div>
       </SidebarInset>
     </SidebarProvider>

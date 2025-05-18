@@ -1,3 +1,4 @@
+// ✅ CategoriaDialog.tsx actualizado
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -55,6 +56,25 @@ export function CategoriaDialog({ open, onOpenChange, categoria, onSave, categor
               </SelectContent>
             </Select>
           </div>
+
+          {formData.tipo === "S" && (
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label className="text-right">Categoría Padre</Label>
+              <Select
+                value={formData.categoria_padre_id || ""}
+                onValueChange={(val) => handleChange("categoria_padre_id", val)}
+              >
+                <SelectTrigger className="col-span-3">
+                  <SelectValue placeholder="Seleccionar categoría padre" />
+                </SelectTrigger>
+                <SelectContent>
+                  {categoriasPadre.map((cat: any) => (
+                    <SelectItem key={cat.id} value={cat.id}>{cat.descripcion}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+          )}
 
           <div className="grid grid-cols-4 items-center gap-4">
             <Label className="text-right">Estado</Label>

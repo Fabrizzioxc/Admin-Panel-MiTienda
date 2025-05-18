@@ -32,17 +32,20 @@ export default function CategoriasPage() {
     fetchCategorias();
   }, []);
 
-const handleNuevaCategoria = (tipo: "C" | "S") => {
-  const nueva: Categoria = {
-    id: crypto.randomUUID(),
-    codigo: tipo === "C" ? `C-${crypto.randomUUID().slice(0, 8)}` : `S-${crypto.randomUUID().slice(0, 8)}`,
-    descripcion: "",
-    tipo,
-    estado: "A",
+  const handleNuevaCategoria = (tipo: "C" | "S") => {
+    const nueva: Categoria = {
+      id: crypto.randomUUID(),
+      codigo: tipo === "C" ? `C-${crypto.randomUUID().slice(0, 8)}` : `S-${crypto.randomUUID().slice(0, 8)}`,
+      descripcion: "",
+      tipo,
+      estado: "A",
+      imagen_url: null,
+      categoria_padre_id: null,
+    };
+    setEditingCategoria(nueva);
+    setDialogOpen(true);
   };
-  setEditingCategoria(nueva);
-  setDialogOpen(true);
-};
+  
 
 const handleEditar = (categoria: Categoria) => {
   setEditingCategoria(categoria);

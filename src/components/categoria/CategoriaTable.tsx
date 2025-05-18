@@ -1,3 +1,4 @@
+// ✅ CategoriaTable.tsx actualizado
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { FolderIcon, TagIcon, PencilIcon } from "lucide-react";
@@ -38,7 +39,7 @@ export function CategoriaTable({ categorias, onEdit }: any) {
                   {cat.tipo === "C" ? "Categoría" : "Subcategoría"}
                 </Badge>
               </TableCell>
-              <TableCell>{getParentName(cat.parent_id)}</TableCell>
+              <TableCell>{getParentName(cat.categoria_padre_id)}</TableCell>
               <TableCell>
                 <Badge variant={cat.estado === "A" ? "default" : "destructive"}>
                   {cat.estado === "A" ? "Activo" : "Inactivo"}
