@@ -27,8 +27,7 @@ export function useProductos() {
   const fetchProductos = async () => {
     const { data, error } = await supabase
       .from("productos")
-      .select("*")
-      .eq("estado", "A");
+      .select("*");
     if (error) toast.error("Error cargando productos");
     else setProductos(data as Producto[]);
   };

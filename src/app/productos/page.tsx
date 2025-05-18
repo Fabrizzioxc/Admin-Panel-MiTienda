@@ -14,6 +14,13 @@ import { ProductForm, Producto, Categoria } from "@/components/productos/Product
 import { useProductos } from "@/hooks/useProductos";
 import { toast } from "sonner";
 
+interface ProductTableProps {
+  productos: Producto[];
+  searchTerm: string;
+  selectedProducts: string[];
+  onSelect: (id: string) => void;
+}
+
 const categoriasData: Categoria[] = [
   { id: "1", nombre: "Smartphones", tipo: "S", estado: "A", categoria_padre_id: "" },
   { id: "2", nombre: "Laptops", tipo: "S", estado: "A", categoria_padre_id: "" },
@@ -24,7 +31,7 @@ const categoriasData: Categoria[] = [
 
 export default function ProductosPage() {
   const { productos, calcularPrecioVenta, actualizarProducto, crearProducto, desactivarProducto, fetchProductos } = useProductos();
-  const [selectedProductId, setSelectedProductId] = useState<string | null>(null);
+  const [selectedProducts, setSelectedProducts] = useState<string[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
@@ -45,18 +52,26 @@ export default function ProductosPage() {
     precio_venta: 0,
     created_at: new Date().toISOString(),
   });
-  
+
   const filteredSubcategorias = categoriasData.filter(
     (cat) => cat.tipo === "S" && cat.estado === "A" && cat.categoria_padre_id === editingProduct.categoria_id
   );
 
   const handleSelectProduct = (id: string) => {
-    setSelectedProductId((prev) => (prev === id ? null : id));
+    setSelectedProducts((prev: string[]) =>
+      prev.includes(id) ? prev.filter((pid: string) => pid !== id) : [...prev, id]
+    );
   };
 
   const handleEditClick = () => {
-    const product = productos.find((p) => p.id === selectedProductId);
-    if (!product) return toast.error("Seleccione un producto");
+    if (selectedProducts.length !== 1) {
+      toast.error("Debe seleccionar exactamente un producto para editar");
+      return;
+    }
+
+    const product = productos.find((p) => p.id === selectedProducts[0]);
+    if (!product) return toast.error("Producto no encontrado");
+
     setEditingProduct(product);
     setIsFormOpen(true);
   };
@@ -80,11 +95,33 @@ export default function ProductosPage() {
       created_at: new Date().toISOString(),
     });
     setSelectedFile(null);
+    setSelectedProducts([]);
     setIsFormOpen(true);
   };
 
   const handleFormChange = (field: keyof Producto, value: any) => {
     setEditingProduct({ ...editingProduct, [field]: value });
+  };
+
+  const handleDeleteClick = async () => {
+    if (selectedProducts.length === 0) {
+      toast.error("Debe seleccionar al menos un producto para eliminar");
+      return;
+    }
+
+    const confirm = window.confirm(`¿Está seguro que desea eliminar ${selectedProducts.length} producto(s)?`);
+    if (!confirm) return;
+
+    try {
+      for (const productId of selectedProducts) {
+        await desactivarProducto(productId);
+      }
+      toast.success("Productos eliminados exitosamente");
+      setSelectedProducts([]);
+      fetchProductos();
+    } catch (error) {
+      toast.error("Error al eliminar los productos");
+    }
   };
 
   const handleFileChange = (file: File) => {
@@ -93,10 +130,8 @@ export default function ProductosPage() {
 
   const handleSubmitForm = async () => {
     if (editingProduct.id) {
-      // Actualizar producto existente
       await actualizarProducto(editingProduct, selectedFile || undefined);
     } else {
-      // Crear nuevo producto (requiere archivo)
       if (!selectedFile) return toast.error("Debes subir una imagen");
       await crearProducto(editingProduct, selectedFile);
     }
@@ -105,50 +140,50 @@ export default function ProductosPage() {
     fetchProductos();
   };
 
-  const handleDeleteClick = () => {
-    if (!selectedProductId) return toast.error("Seleccione un producto");
-    desactivarProducto(selectedProductId);
-  };
-
   return (
     <SidebarProvider>
       <AppSidebar variant="inset" />
       <SidebarInset>
         <SiteHeader />
-        <div className="flex flex-1 flex-col p-6">
+        <div className="p-6">
+          <h2 className="text-xl font-semibold mb-4">Gestión de Productos</h2>
           <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <div className="relative w-full sm:w-64">
               <SearchIcon className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
               <Input
                 placeholder="Buscar productos..."
-                className="pl-8"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
               />
             </div>
             <div className="flex gap-2">
-              <Button onClick={handleNewProduct} className="gap-1">
-                <PlusIcon className="h-4 w-4" /> Crear
+              <Button onClick={handleNewProduct} className="gap-2">
+                <PlusIcon className="h-4 w-4" />
+                Nuevo Producto
               </Button>
-              <Button variant="outline" onClick={handleEditClick} disabled={!selectedProductId} className="gap-1">
-                <PencilIcon className="h-4 w-4" /> Modificar
+              <Button 
+                onClick={handleEditClick}
+                disabled={selectedProducts.length !== 1}
+              >
+                <PencilIcon className="mr-2" />
+                Editar
               </Button>
               <Button
-                variant="outline"
                 onClick={handleDeleteClick}
-                disabled={!selectedProductId}
-                className="gap-1 text-destructive hover:bg-destructive/10"
+                variant="destructive"
+                className="gap-2"
               >
-                <TrashIcon className="h-4 w-4" /> Dar de baja
+                <TrashIcon className="h-4 w-4" />
+                Eliminar
               </Button>
             </div>
           </div>
 
           <ProductTable
             productos={productos}
-            selectedProductId={selectedProductId}
-            onSelect={handleSelectProduct}
             searchTerm={searchTerm}
+            selectedProducts={selectedProducts}
+            onSelect={handleSelectProduct}
           />
 
           <ProductForm

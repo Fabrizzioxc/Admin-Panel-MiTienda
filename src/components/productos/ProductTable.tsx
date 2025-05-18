@@ -1,6 +1,13 @@
-
+// ProductTable.tsx corregido
 import React from "react";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Avatar } from "@/components/ui/avatar";
@@ -8,14 +15,15 @@ import { Producto } from "@/hooks/useProductos";
 
 interface ProductTableProps {
   productos: Producto[];
-  selectedProductId: string | null;
-  onSelect: (id: string) => void;
   searchTerm: string;
+  selectedProducts: string[];
+  onSelect: (id: string) => void;
 }
 
-export function ProductTable({ productos, selectedProductId, onSelect, searchTerm }: ProductTableProps) {
-  const filteredProductos = productos.filter((producto) =>
-    producto?.descripcion?.toLowerCase().includes(searchTerm.toLowerCase())
+export function ProductTable({ productos, searchTerm, selectedProducts, onSelect }: ProductTableProps) {
+  const filtered = productos.filter(p =>
+    p.nombre.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    p.descripcion.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   return (
@@ -28,29 +36,36 @@ export function ProductTable({ productos, selectedProductId, onSelect, searchTer
             <TableHead>Nombre</TableHead>
             <TableHead>Descripción</TableHead>
             <TableHead>Precio</TableHead>
+            <TableHead>Moneda</TableHead>
+            <TableHead>Unidad de Venta</TableHead>
             <TableHead>Estado</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
-          {filteredProductos.map((producto) => (
-            <TableRow key={producto.id} className={producto.estado === "I" ? "text-destructive" : ""}>
+          {filtered.map((producto) => (
+            <TableRow
+              key={producto.id}
+              className={producto.estado === "I" ? "bg-muted text-muted-foreground font-bold" : ""}
+            >
               <TableCell>
                 <Checkbox
-                  checked={selectedProductId === producto.id}
+                  checked={selectedProducts.includes(producto.id)}
                   onCheckedChange={() => onSelect(producto.id)}
                 />
               </TableCell>
               <TableCell>
                 <Avatar className="h-10 w-10 rounded-md">
-                  <img src={producto.foto_url || "/placeholder.svg"} alt={producto.descripcion} />
+                  <img src={producto.foto_url || "/placeholder.svg"} alt={producto.nombre} />
                 </Avatar>
               </TableCell>
-              <TableCell className="font-medium">{producto.nombre}</TableCell>
-              <TableCell className="max-w-xs truncate">{producto.descripcion}</TableCell>
-              <TableCell>${producto.precio_venta.toFixed(2)}</TableCell>
-              <TableCell>
-                <Badge variant={producto.estado === "A" ? "outline" : "destructive"}>
-                  {producto.estado === "A" ? "Activo" : "Inactivo"}
+              <TableCell>{producto.nombre}</TableCell>
+              <TableCell>{producto.descripcion}</TableCell>
+              <TableCell className="text-right">{producto.precio_venta.toFixed(2)}</TableCell>
+              <TableCell>{producto.moneda}</TableCell>
+              <TableCell>{producto.unidad_venta}</TableCell>
+              <TableCell className="text-center">
+                <Badge variant={producto.estado === "I" ? "destructive" : "default"}>
+                  {producto.estado === "I" ? "Inactivo" : "Activo"}
                 </Badge>
               </TableCell>
             </TableRow>
