@@ -14,89 +14,64 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
-import { Avatar } from "@/components/ui/avatar";
 import {
-  ArrowUpDownIcon,
   MailIcon,
   MoreVerticalIcon,
   PhoneIcon,
   UserIcon,
 } from "lucide-react";
-import { Cliente } from "@/hooks/useClientes";
+import { Cliente } from "@/types/types";
+import { ClienteModal } from "./ClienteModal";
+import { useState } from "react";
 
 interface ClienteTableProps {
   clientes: Cliente[];
-  onSort: (field: keyof Cliente) => void;
-  sortField: keyof Cliente;
 }
 
-export function ClienteTable({ clientes, onSort, sortField }: ClienteTableProps) {
+export function ClienteTable({ clientes }: ClienteTableProps) {
+  const [selectedCliente, setSelectedCliente] = useState<Cliente | null>(null);
   const formatDate = (dateString: string) =>
     new Date(dateString).toLocaleDateString();
 
+  const handleViewProfile = (cliente: Cliente) => {
+    setSelectedCliente(cliente);
+  };
+
   return (
     <div className="mt-6 rounded-md border">
+      <ClienteModal
+        cliente={selectedCliente}
+        isOpen={selectedCliente !== null}
+        onClose={() => setSelectedCliente(null)}
+      />
       <Table>
         <TableHeader>
           <TableRow>
             <TableHead className="w-12" />
-            <TableHead>
-              <SortHeader
-                label="Nombre"
-                field="nombre"
-                sortField={sortField}
-                onSort={onSort}
-              />
-            </TableHead>
-            <TableHead>
-              <SortHeader
-                label="Email"
-                field="email"
-                sortField={sortField}
-                onSort={onSort}
-              />
-            </TableHead>
-            <TableHead>Celular</TableHead>
-            <TableHead>
-              <SortHeader
-                label="Fecha de Registro"
-                field="fecha_registro"
-                sortField={sortField}
-                onSort={onSort}
-              />
-            </TableHead>
-            <TableHead>
-              <SortHeader
-                label="Estado"
-                field="estado"
-                sortField={sortField}
-                onSort={onSort}
-              />
-            </TableHead>
-            <TableHead className="w-12" />
+            <TableHead className="px-4 text-left">Nombre</TableHead>
+            <TableHead className="px-4 text-center">Email</TableHead>
+            <TableHead className="px-4 text-center">Celular</TableHead>
+            <TableHead className="px-4 text-center">Fecha de Creación</TableHead>
+            <TableHead className="px-4 text-center">Estado</TableHead>
+            <TableHead className="w-12 text-center" />
           </TableRow>
         </TableHeader>
         <TableBody>
           {clientes.map((cliente) => (
             <TableRow key={cliente.id}>
-              <TableCell>
-                <Avatar className="h-10 w-10 rounded-full">
-                  <img
-                    src={cliente.avatar || "/placeholder.svg"}
-                    alt={cliente.nombre}
-                  />
-                </Avatar>
+              <TableCell className="w-12" />
+              <TableCell className="px-4 text-left font-medium">
+                {`${cliente.nombres} ${cliente.apellido_paterno} ${cliente.apellido_materno}`}
               </TableCell>
-              <TableCell className="font-medium">{cliente.nombre}</TableCell>
-              <TableCell>{cliente.email}</TableCell>
-              <TableCell>{cliente.celular}</TableCell>
-              <TableCell>{formatDate(cliente.fecha_registro)}</TableCell>
-              <TableCell>
-                <Badge variant={cliente.estado === "Activo" ? "outline" : "secondary"}>
-                  {cliente.estado}
+              <TableCell className="px-4 text-center">{cliente.email}</TableCell>
+              <TableCell className="px-4 text-center">{cliente.celular}</TableCell>
+              <TableCell className="px-4 text-center">{formatDate(cliente.created_at)}</TableCell>
+              <TableCell className="px-4 text-center">
+                <Badge variant={cliente.estado === "A" ? "outline" : "secondary"}>
+                  {cliente.estado === "A" ? "Activo" : "Inactivo"}
                 </Badge>
               </TableCell>
-              <TableCell>
+              <TableCell className="text-center">
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
                     <Button variant="ghost" className="h-8 w-8 p-0">
@@ -104,7 +79,10 @@ export function ClienteTable({ clientes, onSort, sortField }: ClienteTableProps)
                     </Button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="end">
-                    <DropdownMenuItem className="flex items-center gap-2">
+                    <DropdownMenuItem
+                      className="flex items-center gap-2"
+                      onClick={() => handleViewProfile(cliente)}
+                    >
                       <UserIcon className="h-4 w-4" />
                       Ver perfil
                     </DropdownMenuItem>
@@ -124,28 +102,5 @@ export function ClienteTable({ clientes, onSort, sortField }: ClienteTableProps)
         </TableBody>
       </Table>
     </div>
-  );
-}
-
-function SortHeader({
-  label,
-  field,
-  sortField,
-  onSort,
-}: {
-  label: string;
-  field: keyof Cliente;
-  sortField: keyof Cliente;
-  onSort: (field: keyof Cliente) => void;
-}) {
-  return (
-    <Button
-      variant="ghost"
-      className="flex items-center gap-1 p-0 hover:bg-transparent"
-      onClick={() => onSort(field)}
-    >
-      <span>{label}</span>
-      <ArrowUpDownIcon className="h-4 w-4" />
-    </Button>
   );
 }
