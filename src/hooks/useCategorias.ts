@@ -1,39 +1,66 @@
-import { useState } from "react";
+// hooks/useCategorias.ts
+import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabaseClient";
 import { toast } from "sonner";
 import { Categoria } from "@/types/types";
 
-export const useCategorias = () => {
+export function useCategorias() {
   const [categorias, setCategorias] = useState<Categoria[]>([]);
+  const [loading, setLoading] = useState(false);
 
   const fetchCategorias = async () => {
+    setLoading(true);
     const { data, error } = await supabase
       .from("categorias")
       .select("*")
       .order("descripcion", { ascending: true });
 
     if (error) {
-      toast.error("Error al obtener categorías");
+      toast.error(`Error al cargar categorías: ${error.message}`);
+      console.error('Error en Supabase:', error);
     } else {
-      setCategorias(data as Categoria[]);
+      setCategorias(data || []);
     }
+    setLoading(false);
   };
 
   const guardarCategoria = async (categoria: Categoria) => {
-    const isNueva = !categoria.id;
-    const { error } = isNueva
-      ? await supabase.from("categorias").insert([categoria])
-      : await supabase.from("categorias").update(categoria).eq("id", categoria.id!);
+    try {
+      const { data, error } = await supabase
+        .from("categorias")
+        .upsert([categoria])
+        .select()
+        .single();
 
-    if (error) {
-      toast.error("Error al guardar categoría");
-    } else {
-      toast.success(isNueva ? "Categoría creada" : "Categoría actualizada");
-      fetchCategorias();
+      if (error) {
+        throw error;
+      }
+
+      if (!data) {
+        throw new Error('No se recibieron datos de la categoría');
+      }
+
+      toast.success("Categoría guardada correctamente");
+      await fetchCategorias(); // Recargar la lista
+      return data;
+    } catch (error: any) {
+      console.error('Error en Supabase:', error);
+      toast.error(`Error al guardar la categoría: ${error.message}`);
+      return null;
     }
   };
 
   const categoriasPadre = categorias.filter((c) => c.tipo === "C");
 
-  return { categorias, fetchCategorias, guardarCategoria, categoriasPadre };
-};
+  useEffect(() => {
+    fetchCategorias();
+  }, []);
+
+  return {
+    categorias,
+    categoriasPadre,
+    guardarCategoria,
+    fetchCategorias,
+    loading,
+  };
+}

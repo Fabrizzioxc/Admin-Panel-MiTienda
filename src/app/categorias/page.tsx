@@ -34,18 +34,19 @@ export default function CategoriasPage() {
 
 const handleNuevaCategoria = (tipo: "C" | "S") => {
   const nueva: Categoria = {
+    id: crypto.randomUUID(),
+    codigo: tipo === "C" ? `C-${crypto.randomUUID().slice(0, 8)}` : `S-${crypto.randomUUID().slice(0, 8)}`,
     descripcion: "",
     tipo,
-    parent_id: tipo === "S" ? categoriasPadre?.[0]?.id ?? null : null,
     estado: "A",
   };
   setEditingCategoria(nueva);
-  setDialogOpen(true); // <- esta línea es clave
+  setDialogOpen(true);
 };
 
 const handleEditar = (categoria: Categoria) => {
   setEditingCategoria(categoria);
-  setDialogOpen(true); // <- también aquí
+  setDialogOpen(true);
 };
 
 const filteredCategorias = categorias.filter((cat: Categoria) => {

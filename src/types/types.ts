@@ -1,7 +1,8 @@
 export type Categoria = {
-  id?: string;
-  descripcion: string;
+  id: string;
+  codigo: string;
   tipo: "C" | "S";
-  parent_id: string | null;
+  descripcion: string;
+  imagen_url?: string;
   estado: "A" | "I";
 };

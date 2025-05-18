@@ -6,10 +6,18 @@ import { Button } from "@/components/ui/button";
 import { useState, useEffect } from "react";
 
 export function CategoriaDialog({ open, onOpenChange, categoria, onSave, categoriasPadre }: any) {
-  const [formData, setFormData] = useState(categoria || {});
+  const [formData, setFormData] = useState({
+    ...categoria,
+    estado: categoria?.estado || "A",
+    tipo: categoria?.tipo || "C"
+  });
 
   useEffect(() => {
-    setFormData(categoria || {});
+    setFormData({
+      ...categoria,
+      estado: categoria?.estado || "A",
+      tipo: categoria?.tipo || "C"
+    });
   }, [categoria]);
 
   const handleChange = (field: string, value: any) => {
@@ -47,24 +55,6 @@ export function CategoriaDialog({ open, onOpenChange, categoria, onSave, categor
               </SelectContent>
             </Select>
           </div>
-
-          {formData.tipo === "S" && (
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label className="text-right">Categoría Padre</Label>
-              <Select value={formData.parent_id || ""} onValueChange={(val) => handleChange("parent_id", val)}>
-                <SelectTrigger className="col-span-3">
-                  <SelectValue placeholder="Seleccionar categoría padre" />
-                </SelectTrigger>
-                <SelectContent>
-                  {categoriasPadre.map((cat: any) => (
-                    <SelectItem key={cat.id} value={cat.id}>
-                      {cat.descripcion}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-          )}
 
           <div className="grid grid-cols-4 items-center gap-4">
             <Label className="text-right">Estado</Label>
