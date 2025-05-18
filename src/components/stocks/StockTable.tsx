@@ -61,7 +61,7 @@ export function StockTable({ items, edited, setEdited, onEdit, isLow }: StockTab
                       <AlertTriangleIcon className="h-3 w-3" /> Bajo
                     </Badge>
                   ) : (
-                    <Badge variant="outline">Normal</Badge>
+                    <Badge variant="outline">A</Badge>
                   )}
                 </TableCell>
                 <TableCell>

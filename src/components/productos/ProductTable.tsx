@@ -67,7 +67,10 @@ export function ProductTable({ productos, searchTerm, selectedProducts, onSelect
               <TableCell className="text-center">{producto.moneda}</TableCell>
               <TableCell className="whitespace-nowrap">{producto.unidad_venta}</TableCell>
               <TableCell className="text-center">
-                <Badge variant={producto.estado === "I" ? "destructive" : "default"}>
+                <Badge 
+                  variant={producto.estado === "I" ? "destructive" : "default"} 
+                  className="px-3 py-1 text-sm"
+                >
                   {producto.estado === "I" ? "Inactivo" : "Activo"}
                 </Badge>
               </TableCell>
