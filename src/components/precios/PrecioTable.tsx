@@ -1,3 +1,6 @@
+// components/precios/PrecioTable.tsx
+"use client";
+
 import {
   Table,
   TableBody,
@@ -6,63 +9,52 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Input } from "@/components/ui/input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Avatar } from "@/components/ui/avatar";
-import { SearchIcon, FilterIcon } from "lucide-react";
+import { Checkbox } from "@/components/ui/checkbox";
+import { FilterIcon } from "lucide-react";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Producto } from "@/hooks/usePrecios";
 
 interface PrecioTableProps {
   productos: Producto[];
-  categorias: { id: number; nombre: string }[];
-  selectedIds: number[];
-  onSearch: (value: string) => void;
-  onFilter: (value: string) => void;
+  selected: string[];
+  onToggleSelect: (id: string, checked: boolean) => void;
   onSelectAll: (checked: boolean) => void;
-  onSelect: (id: number, checked: boolean) => void;
-  searchTerm: string;
   categoriaFilter: string;
+  onFilter: (categoria: string) => void;
 }
 
 export function PrecioTable({
   productos,
-  categorias,
-  selectedIds,
-  onSearch,
-  onFilter,
+  selected,
+  onToggleSelect,
   onSelectAll,
-  onSelect,
-  searchTerm,
   categoriaFilter,
+  onFilter,
 }: PrecioTableProps) {
   return (
     <div className="space-y-4">
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <div className="relative w-full sm:w-64">
-          <SearchIcon className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-          <Input
-            placeholder="Buscar productos..."
-            className="pl-8"
-            value={searchTerm}
-            onChange={(e) => onSearch(e.target.value)}
-          />
-        </div>
-        <div className="flex items-center gap-2">
-          <FilterIcon className="h-4 w-4 text-muted-foreground" />
-          <Select value={categoriaFilter} onValueChange={onFilter}>
-            <SelectTrigger className="w-[180px]">
-              <SelectValue placeholder="Filtrar por categoría" />
-            </SelectTrigger>
-            <SelectContent>
-              {categorias.map((cat) => (
-                <SelectItem key={cat.id} value={cat.id.toString()}>
+      <div className="flex items-center gap-2">
+        <FilterIcon className="h-4 w-4 text-muted-foreground" />
+        <Select value={categoriaFilter} onValueChange={onFilter}>
+          <SelectTrigger>
+            <SelectValue placeholder="Todas las categorías" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="0">Todas las categorías</SelectItem>
+            {productos
+              .map((p) => ({
+                id: p.categoria_id || "0",
+                nombre: p.categoria || "Sin categoría",
+              }))
+              .filter((cat, i, arr) => arr.findIndex((c) => c.id === cat.id) === i)
+              .map((cat) => (
+                <SelectItem key={cat.id} value={cat.id}>
                   {cat.nombre}
                 </SelectItem>
               ))}
-            </SelectContent>
-          </Select>
-        </div>
+          </SelectContent>
+        </Select>
       </div>
 
       <div className="rounded-md border">
@@ -73,9 +65,9 @@ export function PrecioTable({
                 <Checkbox
                   checked={
                     productos.length > 0 &&
-                    productos.every((p) => selectedIds.includes(p.id))
+                    productos.every((p) => selected.includes(p.id))
                   }
-                  onCheckedChange={onSelectAll}
+                  onCheckedChange={(checked) => onSelectAll(!!checked)}
                 />
               </TableHead>
               <TableHead className="w-12"></TableHead>
@@ -88,9 +80,9 @@ export function PrecioTable({
               <TableRow key={producto.id}>
                 <TableCell>
                   <Checkbox
-                    checked={selectedIds.includes(producto.id)}
+                    checked={selected.includes(producto.id)}
                     onCheckedChange={(checked) =>
-                      onSelect(producto.id, !!checked)
+                      onToggleSelect(producto.id, !!checked)
                     }
                   />
                 </TableCell>
@@ -102,9 +94,11 @@ export function PrecioTable({
                     />
                   </Avatar>
                 </TableCell>
-                <TableCell className="font-medium">{producto.nombre}</TableCell>
+                <TableCell className="font-medium">
+                  {producto.nombre}
+                </TableCell>
                 <TableCell className="text-right">
-                  ${producto.precio.toFixed(2)}
+                  S/ {producto.precio.toFixed(2)}
                 </TableCell>
               </TableRow>
             ))}
