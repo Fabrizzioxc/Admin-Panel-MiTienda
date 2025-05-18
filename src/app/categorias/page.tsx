@@ -87,7 +87,12 @@ const filteredCategorias = categorias.filter((cat: Categoria) => {
               <CategoriaToolbar onNuevaCategoria={handleNuevaCategoria} activeTab={activeTab} />
             </div>
             <TabsContent value={activeTab} className="mt-6">
-              <CategoriaTable categorias={filteredCategorias} onEdit={handleEditar} />
+            <CategoriaTable
+  categorias={filteredCategorias}
+  onEdit={handleEditar}
+  activeTab={activeTab}
+  categoriasPadre={categoriasPadre}
+/>
             </TabsContent>
           </Tabs>
 
