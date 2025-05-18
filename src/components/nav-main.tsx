@@ -41,9 +41,10 @@ export function NavMain({
                   tooltip={item.title}
                   asChild
                   isActive={isActive}
+                  size="lg"
                   className={
                     isActive
-                      ? "bg-sidebar-accent text-sidebar-accent-foreground relative after:absolute after:right-0 after:top-0 after:h-full after:w-1 after:bg-primary"
+                      ? "bg-sidebar-accent text-white relative after:absolute after:left-0 after:top-0 after:h-full after:w-2 after:bg-black"
                       : ""
                   }
                 >
