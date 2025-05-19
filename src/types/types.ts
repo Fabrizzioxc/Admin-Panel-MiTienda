@@ -16,6 +16,7 @@ export type Cliente = {
   email: string;
   estado: "A" | "I";
   created_at: string;
+  password?: string;
 };
 
 export type Producto = {

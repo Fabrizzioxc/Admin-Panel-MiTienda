@@ -1,7 +1,14 @@
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
-import { X } from "lucide-react";
+import { X, EyeIcon, EyeOffIcon } from "lucide-react";
 import { Cliente } from "@/types/types";
+import { useState } from "react";
+
 const formatDate = (dateString: string) =>
   new Date(dateString).toLocaleDateString();
 
@@ -12,6 +19,8 @@ interface ClienteModalProps {
 }
 
 export function ClienteModal({ cliente, isOpen, onClose }: ClienteModalProps) {
+  const [showPassword, setShowPassword] = useState(false);
+
   if (!cliente) return null;
 
   return (
@@ -39,7 +48,25 @@ export function ClienteModal({ cliente, isOpen, onClose }: ClienteModalProps) {
             </p>
           </div>
           <div className="space-y-2">
-            <p className="text-sm font-medium leading-none">Fecha de Creación</p>
+            <p className="text-sm font-medium leading-none">Contraseña</p>
+            <div
+              className="cursor-pointer inline-flex items-center gap-2 text-sm leading-none text-muted-foreground bg-muted px-2 py-1 rounded hover:bg-muted/80 transition"
+              onClick={() => setShowPassword(!showPassword)}
+            >
+              {showPassword
+                ? cliente.password || "(Sin contraseña)"
+                : "Click para mostrar"}
+              {showPassword ? (
+                <EyeOffIcon className="w-4 h-4" />
+              ) : (
+                <EyeIcon className="w-4 h-4" />
+              )}
+            </div>
+          </div>
+          <div className="space-y-2">
+            <p className="text-sm font-medium leading-none">
+              Fecha de Creación
+            </p>
             <p className="text-sm leading-none text-muted-foreground">
               {formatDate(cliente.created_at)}
             </p>

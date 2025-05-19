@@ -11,7 +11,6 @@ export const useClientes = () => {
     const { data, error } = await supabase
       .from("clientes")
       .select("*")
-      .eq("email", "fabrizzio@prueba.com"); // puedes cambiarlo por lógica más general
 
     if (error) {
       console.error("Error al cargar cliente:", error);
