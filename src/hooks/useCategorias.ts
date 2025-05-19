@@ -25,9 +25,22 @@ export function useCategorias() {
 
   const guardarCategoria = async (categoria: Categoria) => {
     try {
+      console.log("Categoría a guardar:", categoria);
+
+      // Asegurarse de que el objeto tenga la estructura correcta
+      const categoriaData = {
+        id: categoria.id || undefined,
+        codigo: categoria.codigo.trim(),
+        descripcion: categoria.descripcion.trim(),
+        tipo: categoria.tipo,
+        estado: categoria.estado,
+        imagen_url: categoria.imagen_url || null,
+        categoria_padre_id: categoria.categoria_padre_id || null
+      };
+
       const { data, error } = await supabase
         .from("categorias")
-        .upsert([{ ...categoria }])
+        .upsert(categoriaData)
         .select()
         .single();
 
@@ -39,7 +52,8 @@ export function useCategorias() {
       return data;
     } catch (error: any) {
       console.error("Error en Supabase:", error);
-      toast.error(`Error al guardar la categoría: ${error.message}`);
+      const msg = error?.message || "Error desconocido al guardar la categoría";
+      toast.error(`Error al guardar la categoría: ${msg}`);
       return null;
     }
   };
