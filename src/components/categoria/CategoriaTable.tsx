@@ -1,12 +1,19 @@
-// ✅ CategoriaTable.tsx actualizado
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { FolderIcon, TagIcon, PencilIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Categoria } from "@/types/types";
 
-export function CategoriaTable({ categorias, onEdit }: any) {
+type Props = {
+  categorias: Categoria[];
+  onEdit: (cat: Categoria) => void;
+  activeTab: string;
+  categoriasPadre: Categoria[];
+};
+
+export function CategoriaTable({ categorias, onEdit, activeTab, categoriasPadre }: Props) {
   const getParentName = (parentId: string | null) => {
-    const parent = categorias.find((c: any) => c.id === parentId);
+    const parent = categoriasPadre.find((c) => c.id === parentId);
     return parent ? parent.descripcion : "-";
   };
 
@@ -18,13 +25,15 @@ export function CategoriaTable({ categorias, onEdit }: any) {
             <TableHead className="w-12"></TableHead>
             <TableHead>Nombre</TableHead>
             <TableHead>Tipo</TableHead>
-            <TableHead>Categoría Padre</TableHead>
+            {(activeTab === "subcategorias" || activeTab === "todas") && (
+              <TableHead>Categoría Padre</TableHead>
+            )}
             <TableHead>Estado</TableHead>
             <TableHead className="w-24">Acciones</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
-          {categorias.map((cat: any) => (
+          {categorias.map((cat) => (
             <TableRow key={cat.id} className={cat.estado === "I" ? "text-red-600" : ""}>
               <TableCell>
                 {cat.tipo === "C" ? (
@@ -39,7 +48,13 @@ export function CategoriaTable({ categorias, onEdit }: any) {
                   {cat.tipo === "C" ? "Categoría" : "Subcategoría"}
                 </Badge>
               </TableCell>
-              <TableCell>{getParentName(cat.categoria_padre_id)}</TableCell>
+              {(activeTab === "subcategorias" || activeTab === "todas") && (
+                <TableCell>
+                  {cat.tipo === "S" && cat.categoria_padre_id
+                    ? getParentName(cat.categoria_padre_id)
+                    : "-"}
+                </TableCell>
+              )}
               <TableCell>
                 <Badge variant={cat.estado === "A" ? "default" : "destructive"}>
                   {cat.estado === "A" ? "Activo" : "Inactivo"}

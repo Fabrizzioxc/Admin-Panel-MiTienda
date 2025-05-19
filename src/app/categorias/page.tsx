@@ -8,6 +8,8 @@ import { PlusIcon } from "lucide-react";
 import { CategoriaDialog } from "@/components/categoria/CategoriaDialog";
 import { useCategorias } from "@/hooks/useCategorias";
 import { Categoria } from "@/types/types";
+import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
+import { AppSidebar } from "@/components/app-sidebar";
 
 export default function CategoriasPage() {
   const { categorias, guardarCategoria, fetchCategorias, subcategorias, categoriasPadre } = useCategorias();
@@ -42,6 +44,9 @@ export default function CategoriasPage() {
   
 
   return (
+    <SidebarProvider>
+      <AppSidebar variant="inset" />
+      <SidebarInset>
     <div className="p-6">
       <div className="flex items-center justify-between mb-4">
         <h2 className="text-xl font-semibold">Gestión de Categorías</h2>
@@ -67,13 +72,16 @@ export default function CategoriasPage() {
       />
 
 
-      <CategoriaDialog
-        isOpen={isDialogOpen}
-        onClose={() => setIsDialogOpen(false)}
-        onSubmit={handleSubmit}
-        categoria={editingCategoria}
-        categoriasPadre={categoriasPadre}
-      />
+<CategoriaDialog
+  open={isDialogOpen}
+  onOpenChange={setIsDialogOpen}
+  onSave={handleSubmit}
+  categoria={editingCategoria}
+  categoriasPadre={categoriasPadre}
+/>
+
     </div>
+    </SidebarInset>
+    </SidebarProvider>
   );
 }

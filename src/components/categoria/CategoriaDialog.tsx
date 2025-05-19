@@ -1,31 +1,77 @@
-// ✅ CategoriaDialog.tsx actualizado
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { useState, useEffect } from "react";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
-import { useState, useEffect } from "react";
+import { Categoria } from "@/types/types";
 
-export function CategoriaDialog({ open, onOpenChange, categoria, onSave, categoriasPadre }: any) {
-  const [formData, setFormData] = useState({
-    ...categoria,
-    estado: categoria?.estado || "A",
-    tipo: categoria?.tipo || "C"
+interface Props {
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  onSave: (categoria: Categoria) => void;
+  categoria: Categoria | null;
+  categoriasPadre: Categoria[];
+}
+
+export function CategoriaDialog({
+  open,
+  onOpenChange,
+  onSave,
+  categoria,
+  categoriasPadre,
+}: Props) {
+  const [formData, setFormData] = useState<Categoria>({
+    id: "",
+    codigo: "",
+    descripcion: "",
+    tipo: "C",
+    estado: "A",
+    imagen_url: "",
+    categoria_padre_id: null,
   });
 
   useEffect(() => {
-    setFormData({
-      ...categoria,
-      estado: categoria?.estado || "A",
-      tipo: categoria?.tipo || "C"
-    });
+    if (categoria) {
+      setFormData({
+        ...categoria,
+        categoria_padre_id: categoria.categoria_padre_id ?? null,
+      });
+    } else {
+      setFormData({
+        id: "",
+        codigo: "",
+        descripcion: "",
+        tipo: "C",
+        estado: "A",
+        imagen_url: "",
+        categoria_padre_id: null,
+      });
+    }
   }, [categoria]);
 
-  const handleChange = (field: string, value: any) => {
-    setFormData((prev: any) => ({ ...prev, [field]: value }));
+  const handleChange = (field: keyof Categoria, value: any) => {
+    setFormData((prev) => ({
+      ...prev,
+      [field]: value,
+    }));
   };
 
   const handleSubmit = () => {
+    if (!formData.descripcion.trim()) return;
     onSave(formData);
     onOpenChange(false);
   };
@@ -34,19 +80,26 @@ export function CategoriaDialog({ open, onOpenChange, categoria, onSave, categor
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[500px]">
         <DialogHeader>
-          <DialogTitle>{formData?.id ? "Editar" : "Nueva"} {formData.tipo === "S" ? "Subcategoría" : "Categoría"}</DialogTitle>
+          <DialogTitle>{formData.id ? "Editar" : "Nueva"} {formData.tipo === "S" ? "Subcategoría" : "Categoría"}</DialogTitle>
           <DialogDescription>Complete los campos y guarde los cambios.</DialogDescription>
         </DialogHeader>
 
         <div className="grid gap-4 py-4">
           <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="descripcion" className="text-right">Nombre</Label>
-            <Input id="descripcion" value={formData.descripcion || ""} onChange={(e) => handleChange("descripcion", e.target.value)} className="col-span-3" />
+            <Label className="text-right">Nombre</Label>
+            <Input
+              value={formData.descripcion}
+              onChange={(e) => handleChange("descripcion", e.target.value)}
+              className="col-span-3"
+            />
           </div>
 
           <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="tipo" className="text-right">Tipo</Label>
-            <Select value={formData.tipo || "C"} onValueChange={(val) => handleChange("tipo", val)}>
+            <Label className="text-right">Tipo</Label>
+            <Select
+              value={formData.tipo}
+              onValueChange={(val) => handleChange("tipo", val)}
+            >
               <SelectTrigger className="col-span-3">
                 <SelectValue placeholder="Seleccionar tipo" />
               </SelectTrigger>
@@ -68,8 +121,10 @@ export function CategoriaDialog({ open, onOpenChange, categoria, onSave, categor
                   <SelectValue placeholder="Seleccionar categoría padre" />
                 </SelectTrigger>
                 <SelectContent>
-                  {categoriasPadre.map((cat: any) => (
-                    <SelectItem key={cat.id} value={cat.id}>{cat.descripcion}</SelectItem>
+                  {categoriasPadre.map((cat) => (
+                    <SelectItem key={cat.id} value={cat.id}>
+                      {cat.descripcion}
+                    </SelectItem>
                   ))}
                 </SelectContent>
               </Select>
@@ -78,7 +133,10 @@ export function CategoriaDialog({ open, onOpenChange, categoria, onSave, categor
 
           <div className="grid grid-cols-4 items-center gap-4">
             <Label className="text-right">Estado</Label>
-            <Select value={formData.estado || "A"} onValueChange={(val) => handleChange("estado", val)}>
+            <Select
+              value={formData.estado}
+              onValueChange={(val) => handleChange("estado", val)}
+            >
               <SelectTrigger className="col-span-3">
                 <SelectValue placeholder="Seleccionar estado" />
               </SelectTrigger>
@@ -91,8 +149,12 @@ export function CategoriaDialog({ open, onOpenChange, categoria, onSave, categor
         </div>
 
         <DialogFooter>
-          <Button variant="outline" onClick={() => onOpenChange(false)}>Cancelar</Button>
-          <Button onClick={handleSubmit}>{formData?.id ? "Guardar" : "Crear"}</Button>
+          <Button variant="outline" onClick={() => onOpenChange(false)}>
+            Cancelar
+          </Button>
+          <Button onClick={handleSubmit}>
+            {formData.id ? "Guardar" : "Crear"}
+          </Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>

@@ -1,4 +1,3 @@
-// ✅ useCategorias.ts actualizado (asegura guardar categoria_padre_id)
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabaseClient";
 import { toast } from "sonner";
@@ -12,7 +11,7 @@ export function useCategorias() {
     setLoading(true);
     const { data, error } = await supabase
       .from("categorias")
-      .select("*")
+      .select("*") // ✅ Incluye activas e inactivas
       .order("descripcion", { ascending: true });
 
     if (error) {
@@ -28,7 +27,7 @@ export function useCategorias() {
     try {
       const { data, error } = await supabase
         .from("categorias")
-        .upsert([{ ...categoria }]) // incluye categoria_padre_id si es subcategoría
+        .upsert([{ ...categoria }])
         .select()
         .single();
 
@@ -45,6 +44,21 @@ export function useCategorias() {
     }
   };
 
+  // ✅ Nueva función para inactivar
+  const inactivarCategoria = async (id: string) => {
+    const { error } = await supabase
+      .from("categorias")
+      .update({ estado: "I" })
+      .eq("id", id);
+
+    if (error) {
+      toast.error("Error al inactivar la categoría");
+    } else {
+      toast.success("Categoría inactivada");
+      await fetchCategorias();
+    }
+  };
+
   const categoriasPadre = categorias.filter((c) => c.tipo === "C");
   const subcategorias = categorias.filter((c) => c.tipo === "S");
 
@@ -57,6 +71,7 @@ export function useCategorias() {
     categoriasPadre,
     subcategorias,
     guardarCategoria,
+    inactivarCategoria, // ✅ exportada
     fetchCategorias,
     loading,
   };

@@ -52,8 +52,11 @@ export default function ProductosPage() {
   });
 
   const filteredSubcategorias = subcategorias.filter(
-    (cat) => cat.categoria_padre_id === editingProduct.categoria_id
+    (cat) =>
+      cat.categoria_padre_id === editingProduct.categoria_id &&
+      cat.estado === "A" // ✅ Solo subcategorías activas
   );
+  
 
   const handleSelectProduct = (id: string) => {
     setSelectedProducts((prev: string[]) =>

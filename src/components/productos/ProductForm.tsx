@@ -12,6 +12,7 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { toast } from "sonner";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import {
@@ -45,6 +46,22 @@ export function ProductForm({
   onCancel,
   calcularPrecioVenta,
 }: ProductFormProps) {
+
+  const handleSubmitSeguro = () => {
+    if (!producto.categoria_id) {
+      toast.error("Debes seleccionar una categoría.");
+      return;
+    }
+  
+    const subcat = subcategorias.find((s) => s.id === producto.subcategoria_id);
+    if (subcat && subcat.estado === "I") {
+      toast.warning("La subcategoría seleccionada está inactiva y no puede usarse.");
+      return;
+    }
+  
+    onSubmit();
+  };
+  
   return (
     <Dialog open={isOpen} onOpenChange={(open) => { if (!open) onCancel(); }}>
       <DialogContent className="sm:max-w-[600px]">
@@ -101,12 +118,12 @@ export function ProductForm({
                   <SelectValue placeholder="Seleccionar categoría" />
                 </SelectTrigger>
                 <SelectContent>
-                  {categorias.map((cat) => (
-                    <SelectItem key={cat.id} value={cat.id}>
-                      {cat.descripcion}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
+                {categorias.filter((cat) => cat.estado === "A").map((cat) => (
+                  <SelectItem key={cat.id} value={cat.id}>
+                    {cat.descripcion}
+                  </SelectItem>
+                ))}
+              </SelectContent>
               </Select>
             </div>
 
@@ -229,7 +246,7 @@ export function ProductForm({
 
         <DialogFooter>
           <Button variant="outline" onClick={onCancel}>Cancelar</Button>
-          <Button onClick={onSubmit}>{producto.id ? "Guardar cambios" : "Crear"}</Button>
+          <Button onClick={handleSubmitSeguro}>{producto.id ? "Guardar cambios" : "Crear"}</Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>

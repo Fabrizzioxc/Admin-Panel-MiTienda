@@ -11,7 +11,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
-import { Producto } from "@/hooks/useProductos";
+import { Producto } from "@/types/types";
 
 interface ProductTableProps {
   productos: Producto[];
