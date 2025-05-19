@@ -140,14 +140,18 @@ export default function StockPage() {
                   <Input disabled value={stockActual} className="text-right" />
                 </div>
                 <div className="grid grid-cols-2 items-center gap-4">
-                  <Label>Nuevo stock</Label>
-                  <Input
-                    type="number"
-                    min="0"
-                    value={nuevoStock}
-                    onChange={(e) => setNuevoStock(Number(e.target.value))}
-                    className="text-right"
-                  />
+                <Label>Nuevo stock</Label>
+                <Input
+                  type="text"
+                  inputMode="numeric"
+                  pattern="[0-9]*"
+                  value={nuevoStock === 0 ? "" : nuevoStock.toString()}
+                  onChange={(e) => {
+                    const value = parseInt(e.target.value);
+                    setNuevoStock(isNaN(value) ? 0 : value);
+                  }}
+                  className="text-right"
+                />
                 </div>
               </div>
               <DialogFooter>
