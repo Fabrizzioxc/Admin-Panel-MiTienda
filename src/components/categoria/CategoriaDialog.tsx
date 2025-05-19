@@ -17,6 +17,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
+import { toast } from "sonner";
 import { Categoria } from "@/types/types";
 
 interface Props {
@@ -71,7 +72,16 @@ export function CategoriaDialog({
   };
 
   const handleSubmit = () => {
-    if (!formData.descripcion.trim()) return;
+    if (!formData.descripcion.trim()) {
+      toast.error("El nombre es requerido");
+      return;
+    }
+
+    if (!formData.codigo?.trim()) {
+      const codigoAuto = `C-${Math.random().toString(36).substring(2, 8)}`;
+      formData.codigo = codigoAuto.toUpperCase();
+    }
+
     onSave(formData);
     onOpenChange(false);
   };
