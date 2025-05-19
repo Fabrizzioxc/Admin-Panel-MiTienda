@@ -172,30 +172,33 @@ export function ProductForm({
             <div className="flex flex-col gap-2">
               <Label>Valor de venta</Label>
               <Input
-                type="number"
-                step="0.01"
-                value={producto.valor_venta}
-                onChange={(e) => {
-                  const valor = parseFloat(e.target.value) || 0;
-                  onChange("valor_venta", valor);
-                  const nuevoPrecio = calcularPrecioVenta(valor, producto.tasa_impuesto);
-                  onChange("precio_venta", nuevoPrecio);
-                }}
-              />
+              type="text"
+              inputMode="decimal"
+              pattern="[0-9]*"
+              value={producto.valor_venta === 0 ? "" : producto.valor_venta.toString()}
+              onChange={(e) => {
+                const valor = parseFloat(e.target.value) || 0;
+                onChange("valor_venta", valor);
+                const nuevoPrecio = calcularPrecioVenta(valor, producto.tasa_impuesto);
+                onChange("precio_venta", nuevoPrecio);
+              }}
+            />
+
             </div>
             <div className="flex flex-col gap-2">
               <Label>Tasa de impuesto (%)</Label>
               <Input
-                type="number"
-                step="0.01"
-                value={producto.tasa_impuesto}
-                onChange={(e) => {
-                  const tasa = parseFloat(e.target.value) || 0;
-                  onChange("tasa_impuesto", tasa);
-                  const nuevoPrecio = calcularPrecioVenta(producto.valor_venta, tasa);
-                  onChange("precio_venta", nuevoPrecio);
-                }}
-              />
+              type="text"
+              inputMode="decimal"
+              pattern="[0-9]*"
+              value={producto.tasa_impuesto === 0 ? "" : producto.tasa_impuesto.toString()}
+              onChange={(e) => {
+                const tasa = parseFloat(e.target.value) || 0;
+                onChange("tasa_impuesto", tasa);
+                const nuevoPrecio = calcularPrecioVenta(producto.valor_venta, tasa);
+                onChange("precio_venta", nuevoPrecio);
+              }}
+            />
             </div>
           </div>
 
