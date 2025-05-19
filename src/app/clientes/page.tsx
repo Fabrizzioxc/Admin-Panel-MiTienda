@@ -9,14 +9,7 @@ import { ClienteTable } from "@/components/clientes/ClienteTable";
 import { useClientes } from "@/hooks/useClientes";
 
 export default function ClientesPage() {
-  const {
-    clientes,
-    total,
-    searchTerm,
-    setSearchTerm,
-    handleSort,
-    sortField,
-  } = useClientes();
+  const { clientes, loading } = useClientes();
 
   return (
     <SidebarProvider>
@@ -27,19 +20,14 @@ export default function ClientesPage() {
           <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <div className="relative w-full sm:w-64">
               <SearchIcon className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-              <Input
-                placeholder="Buscar clientes..."
-                className="pl-8"
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-              />
+              <Input placeholder="Buscar clientes..." className="pl-8" />
             </div>
             <div className="text-sm text-muted-foreground">
-              Mostrando {clientes.length} de {total} clientes
+              Mostrando {clientes.length} clientes
             </div>
           </div>
 
-          <ClienteTable clientes={clientes} sortField={sortField} onSort={handleSort} />
+          <ClienteTable clientes={clientes} />
         </div>
       </SidebarInset>
     </SidebarProvider>
