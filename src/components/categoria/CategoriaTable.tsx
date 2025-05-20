@@ -56,7 +56,7 @@ export function CategoriaTable({ categorias, onEdit, activeTab, categoriasPadre 
                 </TableCell>
               )}
               <TableCell>
-                <Badge variant={cat.estado === "A" ? "default" : "destructive"}>
+                <Badge variant={cat.estado === "A" ? "success" : "destructive"}>
                   {cat.estado === "A" ? "Activo" : "Inactivo"}
                 </Badge>
               </TableCell>
