@@ -36,6 +36,7 @@ export default function PreciosPage() {
       <SidebarInset>
         <SiteHeader />
         <div className="flex flex-1 flex-col p-6">
+        <h2 className="text-xl font-semibold mb-4">Gestión de Precios</h2>
           <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <div className="relative w-full sm:w-64">
               <SearchIcon className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
@@ -45,9 +46,6 @@ export default function PreciosPage() {
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
               />
-            </div>
-            <div className="text-sm text-muted-foreground">
-              Mostrando {filtered.length} de {productos.length} productos
             </div>
           </div>
 
@@ -61,6 +59,9 @@ export default function PreciosPage() {
                 categoriaFilter={categoria}
                 onFilter={setCategoria}
               />
+            <div className="text-sm text-muted-foreground">
+              Mostrando {filtered.length} de {productos.length} productos
+            </div>
             </div>
             <div>
               <PrecioForm
