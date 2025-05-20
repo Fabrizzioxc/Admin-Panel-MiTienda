@@ -61,9 +61,8 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         <SidebarMenu>
           <SidebarMenuItem>
  
-              <span className="flex items-center gap-2">
-                <LayoutDashboardIcon className="h-5 w-5" />
-                <span className="text-base font-semibold">Admin Mi Tienda</span>
+              <span className="flex items-center gap-2 w-full justify-center p-4">
+                <span className="text-2xl font-bold">Panel de Administracion</span>
               </span>
 
           </SidebarMenuItem>
