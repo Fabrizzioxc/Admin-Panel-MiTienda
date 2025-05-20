@@ -58,7 +58,7 @@ export function StockTable({ stocks, onEdit }: StockTableProps) {
                       <AlertTriangleIcon className="h-3 w-3" /> Bajo
                     </Badge>
                   ) : (
-                    <Badge variant="outline">Normal</Badge>
+                    <Badge variant="success">Normal</Badge>
                   )}
                 </TableCell>
                 <TableCell>
