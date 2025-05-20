@@ -1,4 +1,3 @@
-// ✅ Productos page.tsx actualizado con categorías y subcategorías sincronizadas
 "use client";
 
 import React, { useState } from "react";
@@ -32,7 +31,9 @@ export default function ProductosPage() {
   const [searchTerm, setSearchTerm] = useState("");
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
-
+  const [initialProductState, setInitialProductState] = useState<string>("");
+  const [showConfirmClose, setShowConfirmClose] = useState(false);
+  
   const [editingProduct, setEditingProduct] = useState<Producto>({
     id: "",
     nombre: "",
@@ -54,26 +55,25 @@ export default function ProductosPage() {
   const filteredSubcategorias = subcategorias.filter(
     (cat) =>
       cat.categoria_padre_id === editingProduct.categoria_id &&
-      cat.estado === "A" // ✅ Solo subcategorías activas
+      cat.estado === "A"
   );
-  
 
   const handleSelectProduct = (id: string) => {
-    setSelectedProducts((prev: string[]) =>
-      prev.includes(id) ? prev.filter((pid: string) => pid !== id) : [...prev, id]
+    setSelectedProducts((prev) =>
+      prev.includes(id) ? prev.filter((pid) => pid !== id) : [...prev, id]
     );
   };
 
   const handleEditClick = () => {
     const product = productos.find((p) => p.id === selectedProducts[0]);
     if (!product) return toast.error("Producto no encontrado");
-
     setEditingProduct(product);
+    setInitialProductState(JSON.stringify(product));
     setIsFormOpen(true);
   };
 
   const handleNewProduct = () => {
-    setEditingProduct({
+    const nuevo: Producto = {
       id: "",
       nombre: "",
       descripcion: "",
@@ -89,27 +89,26 @@ export default function ProductosPage() {
       tasa_impuesto: 0,
       precio_venta: 0,
       created_at: new Date().toISOString(),
-    });
+    };
+    setEditingProduct(nuevo);
+    setInitialProductState(JSON.stringify(nuevo));
     setSelectedFile(null);
     setSelectedProducts([]);
     setIsFormOpen(true);
   };
 
   const handleFormChange = (field: keyof Producto, value: any) => {
-    setEditingProduct((prev: Producto) => ({
-      ...prev,
-      [field]: value,
-    }));    
+    setEditingProduct((prev) => ({ ...prev, [field]: value }));
   };
+
 
   const handleDeleteClick = async () => {
     if (selectedProducts.length === 0) {
       toast.error("Debe seleccionar al menos un producto para eliminar");
       return;
     }
-
-    const confirm = window.confirm(`¿Está seguro que desea eliminar ${selectedProducts.length} producto(s)?`);
-    if (!confirm) return;
+    const confirmDelete = confirm(`¿Está seguro que desea eliminar ${selectedProducts.length} producto(s)?`);
+    if (!confirmDelete) return;
 
     try {
       for (const productId of selectedProducts) {
@@ -118,7 +117,7 @@ export default function ProductosPage() {
       toast.success("Productos eliminados exitosamente");
       setSelectedProducts([]);
       fetchProductos();
-    } catch (error) {
+    } catch {
       toast.error("Error al eliminar los productos");
     }
   };
@@ -161,18 +160,11 @@ export default function ProductosPage() {
                 <PlusIcon className="h-4 w-4" />
                 Nuevo Producto
               </Button>
-              <Button 
-                onClick={handleEditClick}
-                disabled={selectedProducts.length !== 1}
-              >
+              <Button onClick={handleEditClick} disabled={selectedProducts.length !== 1}>
                 <PencilIcon className="mr-2" />
                 Editar
               </Button>
-              <Button
-                onClick={handleDeleteClick}
-                variant="destructive"
-                className="gap-2"
-              >
+              <Button onClick={handleDeleteClick} variant="destructive" className="gap-2">
                 <TrashIcon className="h-4 w-4" />
                 Eliminar
               </Button>
@@ -186,17 +178,17 @@ export default function ProductosPage() {
             onSelect={handleSelectProduct}
           />
 
-          <ProductForm
-            isOpen={isFormOpen}
-            producto={editingProduct}
-            categorias={categoriasPadre}
-            subcategorias={filteredSubcategorias}
-            onChange={handleFormChange}
-            onFileChange={handleFileChange}
-            onSubmit={handleSubmitForm}
-            onCancel={() => setIsFormOpen(false)}
-            calcularPrecioVenta={calcularPrecioVenta}
-          />
+<ProductForm
+  isOpen={isFormOpen}
+  producto={editingProduct}
+  categorias={categoriasPadre}
+  subcategorias={filteredSubcategorias}
+  onChange={handleFormChange}
+  onFileChange={handleFileChange}
+  onSubmit={handleSubmitForm}
+  onCancel={() => setIsFormOpen(false)} // ✅ sin confirmación aquí
+  calcularPrecioVenta={calcularPrecioVenta}
+/>
         </div>
       </SidebarInset>
     </SidebarProvider>
