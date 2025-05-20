@@ -1,3 +1,4 @@
+// ✅ ProductForm.tsx con orden corregido y campo de estado restaurado
 'use client';
 
 import { ChangeEvent, useEffect, useState } from 'react';
@@ -65,6 +66,7 @@ export function ProductForm({
     if (!producto.unidad_venta) nuevosErrores.unidad_venta = 'Este campo es obligatorio';
     if (!producto.categoria_id) nuevosErrores.categoria_id = 'Debes seleccionar una categoría';
     if (!producto.subcategoria_id) nuevosErrores.subcategoria_id = 'Debes seleccionar una subcategoría';
+    if (!producto.descripcion) nuevosErrores.descripcion = 'Este campo es obligatorio';
     if (!producto.contenido) nuevosErrores.contenido = 'Este campo es obligatorio';
     if (!producto.info_adicional) nuevosErrores.info_adicional = 'Este campo es obligatorio';
     if (!producto.valor_venta || producto.valor_venta <= 0) nuevosErrores.valor_venta = 'Ingrese un valor válido';
@@ -100,7 +102,6 @@ export function ProductForm({
             <DialogDescription>Complete los detalles del producto.</DialogDescription>
           </DialogHeader>
           <div className="grid gap-4 py-2">
-            {/* Nombre */}
             <div className="flex flex-col gap-1">
               <Label htmlFor="nombre">Nombre</Label>
               <Input
@@ -114,7 +115,6 @@ export function ProductForm({
               {errores.nombre && <p className="text-red-500 text-sm">{errores.nombre}</p>}
             </div>
 
-            {/* Unidad de venta */}
             <div className="flex flex-col gap-1">
               <Label>Unidad de venta</Label>
               <Input
@@ -127,55 +127,64 @@ export function ProductForm({
               {errores.unidad_venta && <p className="text-red-500 text-sm">{errores.unidad_venta}</p>}
             </div>
 
-            {/* Categoría */}
-            <div className="flex flex-col gap-1">
-              <Label>Categoría</Label>
-              <Select
-                value={producto.categoria_id || ''}
-                onValueChange={(value) => {
-                  onChange('categoria_id', value);
-                  onChange('subcategoria_id', '');
-                  if (errores.categoria_id) setErrores((prev) => ({ ...prev, categoria_id: undefined }));
-                }}
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="Seleccionar categoría" />
-                </SelectTrigger>
-                <SelectContent>
-                  {categorias.filter(cat => cat.estado === 'A').map(cat => (
-                    <SelectItem key={cat.id} value={cat.id}>{cat.descripcion}</SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-              {errores.categoria_id && <p className="text-red-500 text-sm">{errores.categoria_id}</p>}
-            </div>
-
-            {/* Subcategoría */}
-            <div className="flex flex-col gap-1">
-              <Label>Subcategoría</Label>
-              <Select
-                value={producto.subcategoria_id || ''}
-                onValueChange={(value) => {
-                  onChange('subcategoria_id', value);
-                  if (errores.subcategoria_id) setErrores((prev) => ({ ...prev, subcategoria_id: undefined }));
-                }}
-                disabled={!producto.categoria_id}
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="Seleccionar subcategoría" />
-                </SelectTrigger>
-                <SelectContent>
-                  {subcategorias
-                    .filter(sub => sub.categoria_padre_id === producto.categoria_id)
-                    .map(sub => (
-                      <SelectItem key={sub.id} value={sub.id}>{sub.descripcion}</SelectItem>
+            <div className="grid grid-cols-2 gap-4">
+              <div className="flex flex-col gap-1">
+                <Label>Categoría</Label>
+                <Select
+                  value={producto.categoria_id || ''}
+                  onValueChange={(value) => {
+                    onChange('categoria_id', value);
+                    onChange('subcategoria_id', '');
+                    if (errores.categoria_id) setErrores((prev) => ({ ...prev, categoria_id: undefined }));
+                  }}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Seleccionar categoría" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {categorias.filter(cat => cat.estado === 'A').map(cat => (
+                      <SelectItem key={cat.id} value={cat.id}>{cat.descripcion}</SelectItem>
                     ))}
-                </SelectContent>
-              </Select>
-              {errores.subcategoria_id && <p className="text-red-500 text-sm">{errores.subcategoria_id}</p>}
+                  </SelectContent>
+                </Select>
+                {errores.categoria_id && <p className="text-red-500 text-sm">{errores.categoria_id}</p>}
+              </div>
+
+              <div className="flex flex-col gap-1">
+                <Label>Subcategoría</Label>
+                <Select
+                  value={producto.subcategoria_id || ''}
+                  onValueChange={(value) => {
+                    onChange('subcategoria_id', value);
+                    if (errores.subcategoria_id) setErrores((prev) => ({ ...prev, subcategoria_id: undefined }));
+                  }}
+                  disabled={!producto.categoria_id}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Seleccionar subcategoría" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {subcategorias
+                      .filter(sub => sub.categoria_padre_id === producto.categoria_id)
+                      .map(sub => (
+                        <SelectItem key={sub.id} value={sub.id}>{sub.descripcion}</SelectItem>
+                      ))}
+                  </SelectContent>
+                </Select>
+                {errores.subcategoria_id && <p className="text-red-500 text-sm">{errores.subcategoria_id}</p>}
+              </div>
             </div>
 
-            {/* Contenido */}
+            <div className="flex flex-col gap-1">
+              <Label>Descripción</Label>
+              <Textarea
+                value={producto.descripcion || ''}
+                onChange={(e) => onChange('descripcion', e.target.value)}
+                placeholder="Ingrese una descripción detallada del producto"
+              />
+              {errores.descripcion && <p className="text-red-500 text-sm">{errores.descripcion}</p>}
+            </div>
+
             <div className="flex flex-col gap-1">
               <Label>Contenido</Label>
               <Input
@@ -188,7 +197,6 @@ export function ProductForm({
               {errores.contenido && <p className="text-red-500 text-sm">{errores.contenido}</p>}
             </div>
 
-            {/* Info adicional */}
             <div className="flex flex-col gap-1">
               <Label>Información adicional</Label>
               <Textarea
@@ -201,7 +209,6 @@ export function ProductForm({
               {errores.info_adicional && <p className="text-red-500 text-sm">{errores.info_adicional}</p>}
             </div>
 
-            {/* Valores monetarios */}
             <div className="grid grid-cols-3 gap-4">
               <div>
                 <Label>Moneda</Label>
@@ -240,44 +247,59 @@ export function ProductForm({
             <Label>Precio venta</Label>
             <Input value={producto.precio_venta.toFixed(2)} disabled />
 
-            {/* Imagen */}
-            <Label>Imagen</Label>
-            <div className="space-y-2">
-              <div className="flex items-center gap-4">
-                <div className="h-20 w-20 overflow-hidden rounded-md border bg-muted flex items-center justify-center">
-                  {producto.foto_url ? (
-                    <img src={producto.foto_url} alt="Vista previa" className="h-full w-full object-cover" />
-                  ) : (
-                    <ImageIcon className="w-6 h-6 text-muted-foreground" />
-                  )}
-                </div>
-                <Input
-                  type="file"
-                  accept="image/*"
-                  onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                    const file = e.target.files?.[0];
-                    if (file) {
-                      if (file.size > 2 * 1024 * 1024) {
-                        toast.error('La imagen no debe superar los 2MB');
-                        return;
+            <div className="flex flex-col gap-1">
+              <Label>Estado</Label>
+              <Select
+                value={producto.estado}
+                onValueChange={(value) => onChange('estado', value)}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Seleccionar estado" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="A">Activo</SelectItem>
+                  <SelectItem value="I">Inactivo</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div className="flex flex-col gap-1">
+              <Label>Imagen</Label>
+              <div className="space-y-2">
+                <div className="flex items-center gap-4">
+                  <div className="h-20 w-20 overflow-hidden rounded-md border bg-muted flex items-center justify-center">
+                    {producto.foto_url ? (
+                      <img src={producto.foto_url} alt="Vista previa" className="h-full w-full object-cover" />
+                    ) : (
+                      <ImageIcon className="w-6 h-6 text-muted-foreground" />
+                    )}
+                  </div>
+                  <Input
+                    type="file"
+                    accept="image/*"
+                    onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                      const file = e.target.files?.[0];
+                      if (file) {
+                        if (file.size > 2 * 1024 * 1024) {
+                          toast.error('La imagen no debe superar los 2MB');
+                          return;
+                        }
+                        onFileChange(file);
+                        const previewUrl = URL.createObjectURL(file);
+                        onChange('foto_url', previewUrl);
+                        if (errores.imagen) setErrores((prev) => ({ ...prev, imagen: undefined }));
                       }
-                      onFileChange(file);
-                      const previewUrl = URL.createObjectURL(file);
-                      onChange('foto_url', previewUrl);
-                      if (errores.imagen) setErrores((prev) => ({ ...prev, imagen: undefined }));
-                    }
-                  }}
-                />
+                    }}
+                  />
+                </div>
+                {errores.imagen && <p className="text-red-500 text-sm">{errores.imagen}</p>}
               </div>
-              {errores.imagen && <p className="text-red-500 text-sm">{errores.imagen}</p>}
             </div>
           </div>
 
           <DialogFooter>
             <Button variant="outline" onClick={handleAttemptClose}>Cancelar</Button>
-            <Button onClick={handleSubmitSeguro}>
-              {producto.id ? 'Guardar cambios' : 'Crear'}
-            </Button>
+            <Button onClick={handleSubmitSeguro}>{producto.id ? 'Guardar cambios' : 'Crear'}</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>

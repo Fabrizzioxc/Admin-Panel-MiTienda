@@ -14,6 +14,7 @@ import { useProductos } from "@/hooks/useProductos";
 import { useCategorias } from "@/hooks/useCategorias";
 import { Producto } from "@/types/types"; 
 import { toast } from "sonner";
+import { ConfirmationModal } from "@/components/productos/ConfirmationModal";
 
 export default function ProductosPage() {
   const {
@@ -33,6 +34,7 @@ export default function ProductosPage() {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [initialProductState, setInitialProductState] = useState<string>("");
   const [showConfirmClose, setShowConfirmClose] = useState(false);
+  const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
   
   const [editingProduct, setEditingProduct] = useState<Producto>({
     id: "",
@@ -59,9 +61,12 @@ export default function ProductosPage() {
   );
 
   const handleSelectProduct = (id: string) => {
-    setSelectedProducts((prev) =>
-      prev.includes(id) ? prev.filter((pid) => pid !== id) : [...prev, id]
-    );
+    setSelectedProducts(prev => {
+      const newSelection = prev.includes(id) 
+        ? prev.filter(pid => pid !== id)
+        : [...prev, id];
+      return newSelection;
+    });
   };
 
   const handleEditClick = () => {
@@ -102,22 +107,23 @@ export default function ProductosPage() {
   };
 
 
-  const handleDeleteClick = async () => {
+  const handleDeleteClick = () => {
     if (selectedProducts.length === 0) {
       toast.error("Debe seleccionar al menos un producto para eliminar");
       return;
     }
-    const confirmDelete = confirm(`¿Está seguro que desea eliminar ${selectedProducts.length} producto(s)?`);
-    if (!confirmDelete) return;
 
+    setShowDeleteConfirmation(true);
+  };
+
+  const handleConfirmDelete = async () => {
     try {
-      for (const productId of selectedProducts) {
-        await desactivarProducto(productId);
-      }
-      toast.success("Productos eliminados exitosamente");
+      await Promise.all(selectedProducts.map(id => desactivarProducto(id)));
+      toast.success(`Se ${selectedProducts.length === 1 ? 'ha eliminado el producto' : 'han eliminado los productos'} exitosamente`);
       setSelectedProducts([]);
       fetchProductos();
-    } catch {
+    } catch (error) {
+      console.error('Error al eliminar productos:', error);
       toast.error("Error al eliminar los productos");
     }
   };
@@ -186,11 +192,23 @@ export default function ProductosPage() {
   onChange={handleFormChange}
   onFileChange={handleFileChange}
   onSubmit={handleSubmitForm}
-  onCancel={() => setIsFormOpen(false)} // ✅ sin confirmación aquí
+  onCancel={() => setIsFormOpen(false)}
   calcularPrecioVenta={calcularPrecioVenta}
 />
         </div>
       </SidebarInset>
+      <ConfirmationModal
+        isOpen={showDeleteConfirmation}
+        onClose={() => setShowDeleteConfirmation(false)}
+        onConfirm={handleConfirmDelete}
+        title={`¿Está seguro que desea eliminar ${selectedProducts.length} producto(s)?`}
+        description={selectedProducts.length === 1 
+          ? "Esta acción no se puede deshacer. El producto será eliminado permanentemente."
+          : "Esta acción no se puede deshacer. Los productos seleccionados serán eliminados permanentemente."
+        }
+        confirmText="Eliminar"
+        cancelText="Cancelar"
+      />
     </SidebarProvider>
   );
 }
