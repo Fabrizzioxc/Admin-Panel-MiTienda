@@ -67,7 +67,7 @@ export function ClienteTable({ clientes }: ClienteTableProps) {
               <TableCell className="px-4 text-center">{cliente.celular}</TableCell>
               <TableCell className="px-4 text-center">{formatDate(cliente.created_at)}</TableCell>
               <TableCell className="px-4 text-center">
-                <Badge variant={cliente.estado === "A" ? "outline" : "secondary"}>
+                <Badge variant={cliente.estado === "A" ? "default" : "secondary"}>
                   {cliente.estado === "A" ? "Activo" : "Inactivo"}
                 </Badge>
               </TableCell>

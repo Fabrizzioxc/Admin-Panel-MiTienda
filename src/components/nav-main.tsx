@@ -44,7 +44,7 @@ export function NavMain({
                   size="lg"
                   className={
                     isActive
-                      ? "bg-sidebar-accent text-white relative after:absolute after:left-0 after:top-0 after:h-full after:w-2 after:bg-black"
+                      ? "bg-sidebar-accent text-white relative after:absolute after:left-0 after:top-0 after:h-full after:w-2 after:bg-[#6b75ff]"
                       : ""
                   }
                 >
