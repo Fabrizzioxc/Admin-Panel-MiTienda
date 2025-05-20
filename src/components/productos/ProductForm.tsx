@@ -13,6 +13,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
+import { ImageIcon } from "lucide-react";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import {
@@ -70,38 +71,31 @@ export function ProductForm({
           <DialogDescription>Complete los detalles del producto.</DialogDescription>
         </DialogHeader>
         <div className="grid max-h-[60vh] gap-4 overflow-y-auto py-4">
-          {/* Nombre y unidad de venta */}
-          <div className="grid grid-cols-2 gap-4">
-            <div className="flex flex-col gap-2">
-              <Label htmlFor="nombre">Nombre</Label>
-              <Input
-                id="nombre"
-                value={producto.nombre}
-                onChange={(e) => onChange("nombre", e.target.value)}
-                required
-              />
-            </div>
-            <div className="flex flex-col gap-2">
-              <Label htmlFor="unidad_venta">Unidad de Venta</Label>
-              <Input
-                id="unidad_venta"
-                value={producto.unidad_venta}
-                onChange={(e) => onChange("unidad_venta", e.target.value)}
-                required
-              />
-            </div>
-          </div>
 
-          {/* Descripción */}
+        {/* Nombre y unidad de venta */}
+
+        <div className="grid grid-cols-2 gap-4">
           <div className="flex flex-col gap-2">
-            <Label htmlFor="descripcion">Descripción</Label>
-            <Textarea
-              id="descripcion"
-              value={producto.descripcion}
-              onChange={(e) => onChange("descripcion", e.target.value)}
+            <Label htmlFor="nombre">Nombre</Label>
+            <Input
+              id="nombre"
+              value={producto.nombre}
+              placeholder="Nombre del producto"
+              onChange={(e) => onChange("nombre", e.target.value)}
               required
             />
           </div>
+          <div className="flex flex-col gap-2">
+            <Label htmlFor="unidad_venta">Unidad de Venta</Label>
+            <Input
+              id="unidad_venta"
+              value={producto.unidad_venta}
+              placeholder="UND, BOT, CJA, PAQ"
+              onChange={(e) => onChange("unidad_venta", e.target.value)}
+              required
+            />
+          </div>
+        </div>
 
           {/* Categoría y Subcategoría */}
           <div className="grid grid-cols-2 gap-4">
@@ -154,12 +148,14 @@ export function ProductForm({
           <Label>Contenido</Label>
           <Input
             value={producto.contenido || ""}
+            placeholder="BOT x 1000ml, PAQ x 15g"
             onChange={(e) => onChange("contenido", e.target.value)}
           />
 
           <Label>Información adicional</Label>
           <Textarea
             value={producto.info_adicional || ""}
+            placeholder="Ingredientes o detalles adicionales"
             onChange={(e) => onChange("info_adicional", e.target.value)}
           />
 
@@ -172,33 +168,35 @@ export function ProductForm({
             <div className="flex flex-col gap-2">
               <Label>Valor de venta</Label>
               <Input
-              type="text"
-              inputMode="decimal"
-              pattern="[0-9]*"
-              value={producto.valor_venta === 0 ? "" : producto.valor_venta.toString()}
-              onChange={(e) => {
-                const valor = parseFloat(e.target.value) || 0;
-                onChange("valor_venta", valor);
-                const nuevoPrecio = calcularPrecioVenta(valor, producto.tasa_impuesto);
-                onChange("precio_venta", nuevoPrecio);
-              }}
-            />
+                type="text"
+                inputMode="decimal"
+                pattern="[0-9]*"
+                placeholder="Ingrese el valor"
+                value={producto.valor_venta === 0 ? "" : producto.valor_venta.toString()}
+                onChange={(e) => {
+                  const valor = parseFloat(e.target.value) || 0;
+                  onChange("valor_venta", valor);
+                  const nuevoPrecio = calcularPrecioVenta(valor, producto.tasa_impuesto);
+                  onChange("precio_venta", nuevoPrecio);
+                }}
+              />
 
             </div>
             <div className="flex flex-col gap-2">
               <Label>Tasa de impuesto (%)</Label>
               <Input
-              type="text"
-              inputMode="decimal"
-              pattern="[0-9]*"
-              value={producto.tasa_impuesto === 0 ? "" : producto.tasa_impuesto.toString()}
-              onChange={(e) => {
-                const tasa = parseFloat(e.target.value) || 0;
-                onChange("tasa_impuesto", tasa);
-                const nuevoPrecio = calcularPrecioVenta(producto.valor_venta, tasa);
-                onChange("precio_venta", nuevoPrecio);
-              }}
-            />
+                type="text"
+                inputMode="decimal"
+                pattern="[0-9]*"
+                placeholder="Ingrese el Porcentaje"
+                value={producto.tasa_impuesto === 0 ? "" : producto.tasa_impuesto.toString()}
+                onChange={(e) => {
+                  const tasa = parseFloat(e.target.value) || 0;
+                  onChange("tasa_impuesto", tasa);
+                  const nuevoPrecio = calcularPrecioVenta(producto.valor_venta, tasa);
+                  onChange("precio_venta", nuevoPrecio);
+                }}
+              />
             </div>
           </div>
 
@@ -224,12 +222,16 @@ export function ProductForm({
           <Label>Imagen</Label>
           <div className="space-y-2">
             <div className="flex items-center gap-4">
-              <div className="h-20 w-20 overflow-hidden rounded-md border">
-                <img
-                  src={producto.foto_url || "/placeholder.svg"}
-                  alt="Vista previa"
-                  className="h-full w-full object-cover"
-                />
+              <div className="h-20 w-20 overflow-hidden rounded-md border bg-muted flex items-center justify-center">
+                {producto.foto_url ? (
+                  <img
+                    src={producto.foto_url}
+                    alt="Vista previa"
+                    className="h-full w-full object-cover"
+                  />
+                ) : (
+                  <ImageIcon className="w-6 h-6 text-muted-foreground" />
+                )}
               </div>
               <Input
                 type="file"
