@@ -49,7 +49,7 @@ export default function CategoriasPage() {
       <SidebarInset>
     <div className="p-6">
       <div className="flex items-center justify-between mb-4">
-        <h2 className="text-xl font-semibold">Gestión de Categorías</h2>
+        <h2 className="text-3xl font-bold mb-4">Gestión de Categorías</h2>
         <Button onClick={handleNuevaCategoria} className="gap-2">
           <PlusIcon className="h-4 w-4" />
           Nueva Categoría

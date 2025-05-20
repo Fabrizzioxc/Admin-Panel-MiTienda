@@ -17,7 +17,7 @@ export default function ClientesPage() {
       <SidebarInset>
         <SiteHeader />
         <div className="flex flex-1 flex-col p-6">
-        <h2 className="text-xl font-semibold mb-4">Gestión de Precios</h2>
+        <h2 className="text-3xl font-bold mb-4">Gestión de Clientes</h2>
           <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <div className="relative w-full sm:w-64">
               <SearchIcon className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />

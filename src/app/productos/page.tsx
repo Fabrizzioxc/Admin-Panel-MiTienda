@@ -150,7 +150,7 @@ export default function ProductosPage() {
       <SidebarInset>
         <SiteHeader />
         <div className="p-6">
-          <h2 className="text-xl font-semibold mb-4">Gestión de Productos</h2>
+          <h2 className="text-3xl font-bold mb-4">Gestión de Productos</h2>
           <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <div className="relative w-full sm:w-64">
               <SearchIcon className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />

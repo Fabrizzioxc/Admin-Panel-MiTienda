@@ -46,7 +46,7 @@ export default function StockPage() {
       <SidebarInset>
         <SiteHeader />
         <div className="p-6">
-          <h2 className="text-xl font-semibold mb-4">Gestión de Stock</h2>
+          <h2 className="text-3xl font-bold mb-4">Gestión de Stock</h2>
           <div className="rounded-md border">
             {loading ? (
               <div className="p-4 text-center">
