@@ -63,7 +63,9 @@ export function ProductTable({ productos, searchTerm, selectedProducts, onSelect
       accessorKey: "foto_url",
       header: () => <div className="text-left">Imagen</div>,
       cell: ({ row }) => (
-        <img src={row.original.foto_url} alt="producto" className="w-14 h-14 object-cover rounded-md" />
+        <div className="relative w-20 h-20">
+          <img src={row.original.foto_url} alt="producto" className="w-full h-full object-cover rounded-lg" />
+        </div>
       ),
     },
     {
