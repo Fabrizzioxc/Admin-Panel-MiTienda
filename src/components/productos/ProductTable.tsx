@@ -95,7 +95,7 @@ export function ProductTable({ productos, searchTerm, selectedProducts, onSelect
       header: () => <div className="text-center">Estado</div>,
       cell: ({ row }) => (
         <div className="text-center">
-          <Badge variant={row.original.estado === "I" ? "destructive" : "default"}>
+          <Badge variant={row.original.estado === "I" ? "destructive" : "success"}>
             {row.original.estado === "I" ? "Inactivo" : "Activo"}
           </Badge>
         </div>
